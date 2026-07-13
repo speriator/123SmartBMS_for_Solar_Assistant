@@ -1,0 +1,14 @@
+[Unit]
+Description=123SmartBMS Web Dashboard Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u /home/solar-assistant/server_smartbms.py
+WorkingDirectory=/home/solar-assistant
+StandardOutput=journal
+StandardError=journal
+Restart=always
+User=solar-assistant
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>123\SmartBMS Dashboard</title>
+    <meta name="description" content="Tableau de bord temps réel pour le système de gestion de batterie 123\SmartBMS">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
+            --primary: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.25);
+            --secondary: #06b6d4;
+            --accent: #8b5cf6;
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.2);
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--danger);
+            box-shadow: 0 0 8px var(--danger);
+        }
+
+        .status-indicator.online {
+            background-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Dashboard Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glassmorphism Card style */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* SoC Circle Gauge */
+        .soc-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .soc-svg {
+            transform: rotate(-90deg);
+            width: 200px;
+            height: 200px;
+        }
+
+        .soc-track, .soc-progress {
+            fill: none;
+            stroke-width: 14;
+        }
+
+        .soc-track {
+            stroke: rgba(255, 255, 255, 0.04);
+        }
+
+        .soc-progress {
+            stroke: var(--primary);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.8s ease-in-out;
+            filter: drop-shadow(0 0 6px var(--primary));
+        }
+
+        .soc-text-container {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .soc-value {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .soc-unit {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .soc-wh {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Stats Grid (Quick numbers) */
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Main Details grid (right side) */
+        .details-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .metrics-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .metric-card-header {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .metric-card-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .metric-card-footer {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-highlight {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        /* Cells Summary Row (Balancing Analysis) */
+        .cells-summary-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--card-border);
+            padding: 0.8rem 1.2rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .summary-item-val {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Deviation Chart */
+        .chart-axis {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 74px;
+            height: 1px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            pointer-events: none;
+        }
+
+        /* Cells Grid layout */
+        .cells-card {
+            flex-grow: 1;
+        }
+
+        .cells-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .cell-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .cell-box:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .cell-number {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .cell-voltage {
+            font-size: 1.2rem;
+            font-weight: 800;
+            transition: color 0.3s ease;
+        }
+
+        .cell-deviation {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: -0.1rem;
+        }
+
+        .cell-temp {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .cell-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 0.2rem;
+        }
+
+        .cell-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            transition: width 0.5s ease, background-color 0.5s ease;
+        }
+
+        /* Cell Color Statuses */
+        .cell-box.normal {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+        .cell-box.normal .cell-fill {
+            background-color: var(--primary);
+        }
+        .cell-box.normal .cell-voltage {
+            color: #10b981;
+        }
+
+        .cell-box.balancing {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: var(--warning);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+        }
+        .cell-box.balancing .cell-fill {
+            background-color: var(--warning);
+        }
+        .cell-box.balancing .cell-voltage {
+            color: #f59e0b;
+        }
+
+        .cell-box.critical {
+            background: rgba(239, 68, 68, 0.18);
+            border-color: var(--danger);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+            animation: border-flash 0.8s infinite alternate;
+        }
+        .cell-box.critical .cell-fill {
+            background-color: var(--danger);
+        }
+        .cell-box.critical .cell-voltage {
+            color: #ff6b6b;
+            animation: text-pulse 0.8s infinite alternate;
+        }
+
+        @keyframes border-flash {
+            0% { border-color: rgba(239, 68, 68, 0.4); }
+            100% { border-color: rgba(239, 68, 68, 1); }
+        }
+
+        @keyframes text-pulse {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        /* Flash animation for cell update (scanning feedback) */
+        .cell-box.flash-update {
+            animation: cell-flash-anim 0.8s ease-out;
+        }
+
+        @keyframes cell-flash-anim {
+            0% {
+                background: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+                transform: scale(1.04);
+                z-index: 10;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* DOOM Vignette flashing screen overlay */
+        .doom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 99999;
+            box-shadow: inset 0 0 0px rgba(239, 68, 68, 0);
+            background: rgba(239, 68, 68, 0);
+            transition: all 0.3s ease;
+            visibility: hidden;
+        }
+
+        .doom-overlay.active {
+            visibility: visible;
+            animation: doom-flash 0.5s infinite alternate;
+        }
+
+        @keyframes doom-flash {
+            0% {
+                box-shadow: inset 0 0 80px rgba(239, 68, 68, 0.45);
+                background: rgba(239, 68, 68, 0.04);
+            }
+            100% {
+                box-shadow: inset 0 0 200px rgba(239, 68, 68, 0.85);
+                background: rgba(239, 68, 68, 0.18);
+            }
+        }
+
+        /* Settings and info bottom cards */
+        .bottom-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .info-lbl {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .info-val {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- DOOM Damage Effect Overlay -->
+    <div id="doom-overlay" class="doom-overlay"></div>
+
+    <header>
+        <div>
+            <h1>123\SmartBMS</h1>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.2rem;">Surveillance de la batterie LTO</p>
+        </div>
+        <div class="status-badge">
+            <div id="status-indicator" class="status-indicator"></div>
+            <span id="status-text">Déconnecté</span>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- Left Column: SoC & Basic Stats -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <div class="card">
+                <span class="card-title">État de Charge</span>
+                <div class="soc-container">
+                    <svg class="soc-svg">
+                        <circle class="soc-track" cx="100" cy="100" r="85"></circle>
+                        <circle id="soc-progress" class="soc-progress" cx="100" cy="100" r="85"></circle>
+                    </svg>
+                    <div class="soc-text-container">
+                        <div>
+                            <span id="soc-value" class="soc-value">0</span>
+                            <span class="soc-unit">%</span>
+                        </div>
+                        <span id="soc-wh" class="soc-wh">0 Wh</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <span class="card-title">Résumé de l'Énergie</span>
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <span class="stat-label">Collecté aujourd'hui</span>
+                        <span id="energy-collected-today" class="stat-value">0 Wh</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Consommé aujourd'hui</span>
+                        <span id="energy-consumed-today" class="stat-value">0 Wh</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Collecté</span>
+                        <span id="energy-collected-total" class="stat-value">0 kWh</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Consommé</span>
+                        <span id="energy-consumed-total" class="stat-value">0 kWh</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Live Metrics & Cell list -->
+        <div class="details-panel">
+            <!-- 3 Main counters: Voltages, Current, Temperatures -->
+            <div class="metrics-summary-grid">
+                <div class="metric-card">
+                    <span class="metric-card-header">Tension de Batterie</span>
+                    <span id="voltage-total" class="metric-card-value">0.00 V</span>
+                    <div class="metric-card-footer">
+                        <span>Min: <span id="voltage-min-lbl" class="footer-highlight">0.00 V</span></span>
+                        <span>Max: <span id="voltage-max-lbl" class="footer-highlight">0.00 V</span></span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <span class="metric-card-header">Courant Total</span>
+                    <span id="current-total" class="metric-card-value">0.00 A</span>
+                    <div class="metric-card-footer">
+                        <span>I1: <span id="current-i1-lbl">0.00 A</span></span>
+                        <span>I2: <span id="current-i2-lbl">0.00 A</span></span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <span class="metric-card-header">Température Système</span>
+                    <span id="temp-max" class="metric-card-value">0 °C</span>
+                    <div class="metric-card-footer">
+                        <span>Min: <span id="temp-min-lbl" class="footer-highlight">0 °C</span></span>
+                        <span>Max: <span id="temp-max-lbl" class="footer-highlight">0 °C</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single-line Cell Deviation Profiler (Replaces warnings/status card) -->
+            <div class="card" style="gap: 0.8rem;">
+                <span class="card-title">Profil de Déviation des Cellules (Écart à la moyenne en mV)</span>
+                <div id="deviation-chart-container" style="display: flex; height: 160px; align-items: stretch; gap: 2px; padding: 10px 8px; background: rgba(0,0,0,0.2); border-radius: 14px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
+                    <!-- 22 columns generated here -->
+                </div>
+            </div>
+
+            <!-- Cells grid -->
+            <div class="card cells-card">
+                <span class="card-title">Surveillance des Tensions Cellules</span>
+                
+                <!-- Balancing and Deviation Summary Row -->
+                <div class="cells-summary-row">
+                    <div>Delta Pack : <span id="pack-delta" class="summary-item-val">- mV</span></div>
+                    <div>Tension Moyenne : <span id="pack-avg" class="summary-item-val">- V</span></div>
+                    <div>Déviation Haute : <span id="highest-cell-deviation" class="summary-item-val">-</span></div>
+                    <div>Déviation Basse : <span id="lowest-cell-deviation" class="summary-item-val">-</span></div>
+                </div>
+
+                <div id="cells-grid" class="cells-grid">
+                    <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">
+                        Attente du signal UART de la batterie...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom panel: settings and diagnostics -->
+    <div class="bottom-panel">
+        <div class="card">
+            <span class="card-title">Paramètres de Configuration du BMS</span>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-lbl">Capacité Configurée</span>
+                    <span id="config-capacity" class="info-val">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-lbl">Seuil V-MIN</span>
+                    <span id="config-vmin" class="info-val">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-lbl">Seuil V-MAX</span>
+                    <span id="config-vmax" class="info-val">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-lbl">Équilibrage à</span>
+                    <span id="config-vbalance" class="info-val">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <span class="card-title">Diagnostics & Cycle (UART)</span>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-lbl">État de Santé (SoH)</span>
+                    <span id="diag-soh" class="info-val">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-lbl">Cycles de Décharge</span>
+                    <span id="diag-cycles" class="info-val">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-lbl">Version Firmware</span>
+                    <span id="diag-fw" class="info-val">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-lbl">Efficacité de Charge</span>
+                    <span id="diag-efficiency" class="info-val">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+        const socValue = document.getElementById('soc-value');
+        const socWh = document.getElementById('soc-wh');
+        const socProgress = document.getElementById('soc-progress');
+        const cellsGrid = document.getElementById('cells-grid');
+        const doomOverlay = document.getElementById('doom-overlay');
+
+        // Circumference of SoC circle
+        const radius = 85;
+        const circumference = 2 * Math.PI * radius;
+        socProgress.style.strokeDasharray = `${circumference} ${circumference}`;
+        setSoC(0);
+
+        function setSoC(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            socProgress.style.strokeDashoffset = offset;
+            socValue.innerText = percent;
+        }
+
+        // Keep track of cell layout state
+        let cellsInitialized = false;
+
+        function updateUI(data) {
+            // Connection Status
+            statusIndicator.className = "status-indicator online";
+            statusText.innerText = "Connecté (BMS en ligne)";
+
+            // SoC and basic stats
+            setSoC(data.soc_pct);
+            socWh.innerText = `${data.energy_stored_wh} Wh`;
+            
+            document.getElementById('energy-collected-today').innerText = `${data.today_energy_collected_wh} Wh`;
+            document.getElementById('energy-consumed-today').innerText = `${data.today_energy_consumed_wh} Wh`;
+            document.getElementById('energy-collected-total').innerText = `${data.total_collected_kwh} kWh`;
+            document.getElementById('energy-consumed-total').innerText = `${data.total_consumed_kwh} kWh`;
+
+            document.getElementById('voltage-total').innerText = `${data.total_voltage.toFixed(2)} V`;
+            document.getElementById('current-total').innerText = `${data.current_total.toFixed(2)} A`;
+            
+            document.getElementById('current-i1-lbl').innerText = `${data.current_i1.toFixed(2)} A`;
+            document.getElementById('current-i2-lbl').innerText = `${data.current_i2.toFixed(2)} A`;
+
+            document.getElementById('voltage-min-lbl').innerText = `${data.v_lowest.toFixed(3)} V (#${data.cell_v_lowest})`;
+            document.getElementById('voltage-max-lbl').innerText = `${data.v_highest.toFixed(3)} V (#${data.cell_v_highest})`;
+
+            document.getElementById('temp-max').innerText = `${data.t_highest} °C`;
+            document.getElementById('temp-min-lbl').innerText = `${data.t_lowest} °C (#${data.cell_t_lowest})`;
+            document.getElementById('temp-max-lbl').innerText = `${data.t_highest} °C (#${data.cell_t_highest})`;
+
+            // Configuration
+            document.getElementById('config-capacity').innerText = `${data.battery_capacity_kwh.toFixed(1)} kWh`;
+            document.getElementById('config-vmin').innerText = `${data.v_min_setting.toFixed(2)} V`;
+            document.getElementById('config-vmax').innerText = `${data.v_max_setting.toFixed(2)} V`;
+            document.getElementById('config-vbalance').innerText = `${data.v_balance_setting.toFixed(2)} V`;
+
+            // Diagnostics (accumulated cycled values)
+            if (data.soh !== null && data.soh !== undefined) document.getElementById('diag-soh').innerText = `${data.soh} %`;
+            if (data.cycles !== null && data.cycles !== undefined) document.getElementById('diag-cycles').innerText = `${data.cycles}`;
+            if (data.fw_version) document.getElementById('diag-fw').innerText = data.fw_version;
+            if (data.charge_efficiency !== null && data.charge_efficiency !== undefined) document.getElementById('diag-efficiency').innerText = `${data.charge_efficiency} %`;
+
+            // Cell Grid handling
+            const cells = data.cells || [];
+            if (cells.length > 0) {
+                if (!cellsInitialized || cellsGrid.children.length !== cells.length) {
+                    cellsGrid.innerHTML = '';
+                    cells.forEach(cell => {
+                        const cellDiv = document.createElement('div');
+                        cellDiv.className = 'cell-box';
+                        cellDiv.id = `cell-container-${cell.cell_id}`;
+                        
+                        cellDiv.innerHTML = `
+                            <span class="cell-number">Cellule #${cell.cell_id}</span>
+                            <span class="cell-voltage" id="cell-v-${cell.cell_id}">- V</span>
+                            <span class="cell-deviation" id="cell-dev-${cell.cell_id}">-</span>
+                            <span class="cell-temp" id="cell-t-${cell.cell_id}">- °C</span>
+                            <div class="cell-bar">
+                                <div class="cell-fill" id="cell-fill-${cell.cell_id}"></div>
+                            </div>
+                        `;
+                        cellsGrid.appendChild(cellDiv);
+                    });
+                    cellsInitialized = true;
+                }
+
+                // Mathematical analysis of deviation
+                const validCells = cells.filter(c => c.voltage > 0);
+                let packAvg = 0.0;
+                let packDeltaMv = 0.0;
+                let maxDevCell = { id: 0, val: -Infinity };
+                let minDevCell = { id: 0, val: Infinity };
+
+                if (validCells.length > 0) {
+                    const totalVolts = validCells.reduce((sum, c) => sum + c.voltage, 0);
+                    packAvg = totalVolts / validCells.length;
+                    
+                    const cellVoltagesOnly = validCells.map(c => c.voltage);
+                    const maxV = Math.max(...cellVoltagesOnly);
+                    const minV = Math.min(...cellVoltagesOnly);
+                    packDeltaMv = (maxV - minV) * 1000;
+                    
+                    validCells.forEach(cell => {
+                        const dev = cell.voltage - packAvg;
+                        if (dev > maxDevCell.val) {
+                            maxDevCell = { id: cell.cell_id, val: dev };
+                        }
+                        if (dev < minDevCell.val) {
+                            minDevCell = { id: cell.cell_id, val: dev };
+                        }
+                    });
+                }
+
+                // Update Balancing Analysis Row
+                document.getElementById('pack-delta').innerText = `${packDeltaMv.toFixed(0)} mV`;
+                document.getElementById('pack-avg').innerText = `${packAvg.toFixed(3)} V`;
+                if (maxDevCell.id > 0) {
+                    document.getElementById('highest-cell-deviation').innerText = `#${maxDevCell.id} (+${(maxDevCell.val * 1000).toFixed(0)} mV)`;
+                }
+                if (minDevCell.id > 0) {
+                    document.getElementById('lowest-cell-deviation').innerText = `#${minDevCell.id} (${(minDevCell.val * 1000).toFixed(0)} mV)`;
+                }
+
+                // Render/update single-line deviation bar chart
+                const devChartContainer = document.getElementById('deviation-chart-container');
+                devChartContainer.innerHTML = '';
+                
+                // Add horizontal axis guide in the middle
+                const axis = document.createElement('div');
+                axis.className = 'chart-axis';
+                devChartContainer.appendChild(axis);
+                
+                cells.forEach(cell => {
+                    if (cell.voltage > 0) {
+                        const deviationMv = (cell.voltage - packAvg) * 1000;
+                        const col = document.createElement('div');
+                        col.style.cssText = "flex: 1; min-width: 34px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; z-index: 1;";
+                        
+                        // Max visual bounds: scale dynamic to largest deviation (min 15mV for visual comfort)
+                        const maxScaleMv = Math.max(Math.abs(maxDevCell.val * 1000), Math.abs(minDevCell.val * 1000), 15);
+                        const barHeightPct = Math.min((Math.abs(deviationMv) / maxScaleMv) * 50, 50); // maximum 50px (half chart height)
+                        
+                        let barColor = 'var(--primary)';
+                        let valColor = '#10b981';
+                        
+                        if (deviationMv >= 0) {
+                            if (deviationMv > 15) {
+                                barColor = 'var(--warning)';
+                                valColor = '#f59e0b';
+                            }
+                            if (cell.voltage >= (data.v_max_setting || 2.8)) {
+                                barColor = 'var(--danger)';
+                                valColor = '#ef4444';
+                            }
+                        } else {
+                            if (deviationMv < -15) {
+                                barColor = 'var(--secondary)';
+                                valColor = '#06b6d4';
+                            }
+                            if (cell.voltage <= (data.v_min_setting || 2.0)) {
+                                barColor = 'var(--danger)';
+                                valColor = '#ef4444';
+                            }
+                        }
+                        
+                        const isLastUpdated = (cell.cell_id === data.last_updated_cell_id);
+                        const flashStyle = isLastUpdated 
+                            ? "background-color: #fff; box-shadow: 0 0 10px #fff; width: 30px; z-index: 5;" 
+                            : `background-color: ${barColor}; width: 26px;`;
+                        
+                        let topText = '&nbsp;';
+                        let bottomText = `<div style="color: var(--text-muted); font-size: 0.75rem; margin-top: 2px;">#${cell.cell_id}</div>`;
+                        
+                        let barStyle = '';
+                        if (deviationMv >= 0) {
+                            topText = `<span style="color: ${valColor}; font-weight: 600;">+${deviationMv.toFixed(0)}</span>`;
+                            barStyle = `bottom: 50%; height: ${barHeightPct}px; border-top-left-radius: 4px; border-top-right-radius: 4px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
+                        } else {
+                            topText = '&nbsp;';
+                            bottomText = `
+                                <span style="color: ${valColor}; font-weight: 600;">${deviationMv.toFixed(0)}</span>
+                                <div style="color: var(--text-muted); font-size: 0.75rem; margin-top: 2px;">#${cell.cell_id}</div>
+                            `;
+                            barStyle = `top: 50%; height: ${barHeightPct}px; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
+                        }
+                        
+                        col.innerHTML = `
+                            <div style="font-size: 0.65rem; height: 14px; text-align: center;">${topText}</div>
+                            <div style="width: 100%; height: 100px; position: relative;">
+                                <div style="${barStyle}"></div>
+                            </div>
+                            <div style="font-size: 0.65rem; text-align: center; line-height: 1.1; height: 26px; display: flex; flex-direction: column; justify-content: flex-start;">${bottomText}</div>
+                        `;
+                        
+                        devChartContainer.appendChild(col);
+                    }
+                });
+
+                // Keep track if any cell is in critical threshold
+                let anyCritical = false;
+
+                // Update cell readings
+                cells.forEach(cell => {
+                    const vEl = document.getElementById(`cell-v-${cell.cell_id}`);
+                    const devEl = document.getElementById(`cell-dev-${cell.cell_id}`);
+                    const tEl = document.getElementById(`cell-t-${cell.cell_id}`);
+                    const fillEl = document.getElementById(`cell-fill-${cell.cell_id}`);
+                    const containerEl = document.getElementById(`cell-container-${cell.cell_id}`);
+
+                    if (cell.voltage > 0) {
+                        vEl.innerText = `${cell.voltage.toFixed(3)} V`;
+                        tEl.innerText = `${cell.temp} °C`;
+
+                        // Calculate cell deviation in mV
+                        const deviationMv = (cell.voltage - packAvg) * 1000;
+                        if (deviationMv >= 0) {
+                            devEl.innerText = `+${deviationMv.toFixed(0)} mV`;
+                            devEl.style.color = deviationMv > 15 ? '#ff9e3b' : '#10b981';
+                        } else {
+                            devEl.innerText = `${deviationMv.toFixed(0)} mV`;
+                            devEl.style.color = deviationMv < -15 ? '#06b6d4' : '#10b981';
+                        }
+
+                        const vMin = data.v_min_setting || 2.0;
+                        const vMax = data.v_max_setting || 2.8;
+                        const vBalance = data.v_balance_setting || 2.50;
+
+                        // Fill percentage calculation
+                        const pct = Math.min(Math.max(((cell.voltage - vMin) / (vMax - vMin)) * 100, 0), 100);
+                        fillEl.style.width = `${pct}%`;
+
+                        // Reset classification (keeps flash animation if running)
+                        const wasFlashing = containerEl.classList.contains('flash-update');
+                        containerEl.className = 'cell-box';
+
+                        // Threshold testing
+                        if (cell.voltage <= vMin || cell.voltage >= vMax) {
+                            containerEl.classList.add('critical');
+                            anyCritical = true;
+                        } else if (cell.voltage >= vBalance) {
+                            containerEl.classList.add('balancing');
+                        } else {
+                            containerEl.classList.add('normal');
+                        }
+
+                        // Apply flash update class if it matches the last updated cell
+                        if (cell.cell_id === data.last_updated_cell_id) {
+                            containerEl.classList.add('flash-update');
+                        } else if (wasFlashing) {
+                            containerEl.classList.remove('flash-update');
+                        }
+                    }
+                });
+
+                // Trigger DOOM red flashing screen vignette overlay on critical thresholds
+                if (anyCritical) {
+                    doomOverlay.classList.add('active');
+                } else {
+                    doomOverlay.classList.remove('active');
+                }
+            }
+        }
+
+        function fetchBMSData() {
+            fetch('/api/data')
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.total_voltage) {
+                        updateUI(data);
+                    }
+                })
+                .catch(err => {
+                    statusIndicator.className = "status-indicator";
+                    statusText.innerText = "Erreur de connexion API";
+                    console.error("API error:", err);
+                });
+        }
+
+        // Poll server for new telemetry every 1 second
+        setInterval(fetchBMSData, 1000);
+        fetchBMSData();
+    </script>
+</body>
+</html>

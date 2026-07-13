@@ -36,10 +36,10 @@
                               radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
             color: var(--text-color);
             min-height: 100vh;
-            padding: 1rem 1rem;
+            padding: 0.6rem;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.6rem;
         }
 
         header {
@@ -47,11 +47,11 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--card-border);
-            padding-bottom: 0.8rem;
+            padding-bottom: 0.4rem;
         }
 
         h1 {
-            font-size: 1.6rem;
+            font-size: 1.25rem;
             font-weight: 800;
             background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
             -webkit-background-clip: text;
@@ -61,40 +61,40 @@
         .status-badge {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.3rem;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 0.4rem 0.8rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 9999px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
         }
 
         .status-indicator {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background-color: var(--danger);
-            box-shadow: 0 0 6px var(--danger);
+            box-shadow: 0 0 4px var(--danger);
         }
 
         .status-indicator.online {
             background-color: var(--primary);
-            box-shadow: 0 0 8px var(--primary);
+            box-shadow: 0 0 6px var(--primary);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        /* Dashboard Grid Layout (narrower left column) */
+        /* Dashboard Grid Layout */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 1rem;
+            grid-template-columns: 200px 1fr;
+            gap: 0.6rem;
         }
 
         @media (max-width: 1024px) {
@@ -108,41 +108,41 @@
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 1rem;
+            border-radius: 8px;
+            padding: 0.6rem;
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
-            box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.2);
+            gap: 0.5rem;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
         }
 
         .card-title {
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-muted);
             letter-spacing: 0.05em;
             text-transform: uppercase;
         }
 
-        /* SoC Circle Gauge (shrunk size) */
+        /* SoC Circle Gauge (micro size) */
         .soc-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 0.5rem 0;
+            padding: 0.25rem 0;
         }
 
         .soc-svg {
             transform: rotate(-90deg);
-            width: 140px;
-            height: 140px;
+            width: 90px;
+            height: 90px;
         }
 
         .soc-track, .soc-progress {
             fill: none;
-            stroke-width: 10;
+            stroke-width: 7;
         }
 
         .soc-track {
@@ -153,7 +153,7 @@
             stroke: var(--primary);
             stroke-linecap: round;
             transition: stroke-dashoffset 0.8s ease-in-out;
-            filter: drop-shadow(0 0 4px var(--primary));
+            filter: drop-shadow(0 0 3px var(--primary));
         }
 
         .soc-text-container {
@@ -165,47 +165,47 @@
         }
 
         .soc-value {
-            font-size: 2.2rem;
+            font-size: 1.4rem;
             font-weight: 800;
             line-height: 1;
         }
 
         .soc-unit {
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             font-weight: 600;
         }
 
         .soc-wh {
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            margin-top: 0.1rem;
+            margin-top: 0.05rem;
         }
 
         /* Stats Grid (Quick numbers) */
         .stats-list {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.4rem;
         }
 
         .stat-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.4rem 0.6rem;
-            background: rgba(255, 255, 255, 0.015);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
+            padding: 0.25rem 0.4rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
         }
 
         .stat-label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
         .stat-value {
-            font-size: 1.05rem;
+            font-size: 0.85rem;
             font-weight: 600;
         }
 
@@ -213,40 +213,40 @@
         .details-panel {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.6rem;
         }
 
         .metrics-summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.5rem;
         }
 
         .metric-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 0.8rem;
+            border-radius: 6px;
+            padding: 0.5rem;
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
+            gap: 0.15rem;
         }
 
         .metric-card-header {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
         }
 
         .metric-card-value {
-            font-size: 1.4rem;
+            font-size: 1.05rem;
             font-weight: 800;
             color: #fff;
         }
 
         .metric-card-footer {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
             display: flex;
             justify-content: space-between;
@@ -261,12 +261,12 @@
         .cells-summary-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.6rem;
             background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--card-border);
-            padding: 0.5rem 0.8rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
+            padding: 0.35rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
@@ -275,12 +275,12 @@
             font-weight: 600;
         }
 
-        /* Deviation Chart (shrunk) */
+        /* Deviation Chart (shrunk micro) */
         .chart-axis {
             position: absolute;
             left: 0;
             right: 0;
-            top: 48px;
+            top: 34px;
             height: 1px;
             border-top: 1px dashed rgba(255, 255, 255, 0.15);
             pointer-events: none;
@@ -293,73 +293,73 @@
 
         .cells-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
-            gap: 1rem 0.6rem;
-            margin-top: 0.6rem;
+            grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+            gap: 0.75rem 0.4rem;
+            margin-top: 0.4rem;
         }
 
-        /* Cell Box as a Battery Body (shrunk) */
+        /* Cell Box as a Battery Body (shrunk micro) */
         .cell-box {
             background: rgba(255, 255, 255, 0.02);
-            border: 2px solid var(--card-border);
-            border-radius: 10px;
-            padding: 0.6rem 0.4rem;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 0.4rem 0.2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            gap: 0.15rem;
+            gap: 0.1rem;
             position: relative;
-            margin-top: 5px;
+            margin-top: 4px;
             transition: all 0.3s ease;
         }
 
         .cell-box:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
-        /* Battery "+" Terminal cap (shrunk) */
+        /* Battery "+" Terminal cap (shrunk micro) */
         .cell-terminal {
             position: absolute;
-            top: -5px;
+            top: -4px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 5px;
+            width: 14px;
+            height: 4px;
             background: var(--card-border);
-            border-top-left-radius: 2px;
-            border-top-right-radius: 2px;
-            border: 2px solid var(--card-border);
+            border-top-left-radius: 1px;
+            border-top-right-radius: 1px;
+            border: 1px solid var(--card-border);
             border-bottom: none;
             transition: all 0.3s ease;
         }
 
         /* Cells Texts inside card */
         .cell-number {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             font-weight: 600;
             color: var(--text-muted);
             z-index: 2;
         }
 
         .cell-voltage {
-            font-size: 1.05rem;
+            font-size: 0.85rem;
             font-weight: 800;
             z-index: 2;
             transition: color 0.3s ease;
         }
 
         .cell-deviation {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 600;
             z-index: 2;
             margin-top: -0.1rem;
         }
 
         .cell-temp {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             color: var(--text-muted);
             z-index: 2;
         }
@@ -370,24 +370,18 @@
         }
 
         .cell-box.balancing {
-            box-shadow: 0 0 6px rgba(245, 158, 11, 0.1);
+            box-shadow: 0 0 4px rgba(245, 158, 11, 0.1);
         }
         .cell-box.balancing .cell-voltage {
             color: #f59e0b;
         }
 
         .cell-box.critical {
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
-            animation: border-flash 0.8s infinite alternate;
+            box-shadow: 0 0 6px rgba(239, 68, 68, 0.2);
         }
         .cell-box.critical .cell-voltage {
             color: #ff6b6b;
             animation: text-pulse 0.8s infinite alternate;
-        }
-
-        @keyframes border-flash {
-            0% { box-shadow: 0 0 6px rgba(239, 68, 68, 0.1); }
-            100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
         }
 
         @keyframes text-pulse {
@@ -402,7 +396,7 @@
 
         @keyframes cell-flash-anim {
             0% {
-                box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
                 transform: scale(1.03);
                 z-index: 10;
             }
@@ -445,34 +439,34 @@
         /* Settings and info bottom cards */
         .bottom-panel {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 0.6rem;
         }
 
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.6rem;
+            gap: 0.4rem;
         }
 
         .info-item {
             background: rgba(255, 255, 255, 0.015);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            padding: 0.4rem 0.6rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            padding: 0.3rem 0.5rem;
             display: flex;
             flex-direction: column;
-            gap: 0.1rem;
+            gap: 0.05rem;
         }
 
         .info-lbl {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
             text-transform: uppercase;
         }
 
         .info-val {
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
     </style>
@@ -485,7 +479,7 @@
     <header>
         <div>
             <h1>123\SmartBMS</h1>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.1rem;">Surveillance de la batterie LTO</p>
+            <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.05rem;">Surveillance de la batterie LTO</p>
         </div>
         <div class="status-badge">
             <div id="status-indicator" class="status-indicator"></div>
@@ -495,13 +489,13 @@
 
     <div class="dashboard-grid">
         <!-- Left Column: SoC & Basic Stats -->
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
             <div class="card">
                 <span class="card-title">État de Charge</span>
                 <div class="soc-container">
                     <svg class="soc-svg">
-                        <circle class="soc-track" cx="70" cy="70" r="58"></circle>
-                        <circle id="soc-progress" class="soc-progress" cx="70" cy="70" r="58"></circle>
+                        <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                        <circle id="soc-progress" class="soc-progress" cx="45" cy="45" r="38"></circle>
                     </svg>
                     <div class="soc-text-container">
                         <div>
@@ -569,9 +563,9 @@
             </div>
 
             <!-- Single-line Cell Deviation Profiler -->
-            <div class="card" style="gap: 0.6rem;">
+            <div class="card" style="gap: 0.4rem;">
                 <span class="card-title">Profil de Déviation des Cellules (Écart à la moyenne en mV)</span>
-                <div id="deviation-chart-container" style="display: flex; height: 110px; align-items: stretch; gap: 2px; padding: 6px 8px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
+                <div id="deviation-chart-container" style="display: flex; height: 74px; align-items: stretch; gap: 1px; padding: 6px 4px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
                     <!-- 22 columns generated here -->
                 </div>
             </div>
@@ -589,7 +583,7 @@
                 </div>
 
                 <div id="cells-grid" class="cells-grid">
-                    <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                    <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 1rem; font-size: 0.75rem;">
                         Attente du signal UART de la batterie...
                     </div>
                 </div>
@@ -653,8 +647,8 @@
         const cellsGrid = document.getElementById('cells-grid');
         const doomOverlay = document.getElementById('doom-overlay');
 
-        // Circumference of SoC circle (adjusted to new radius 58)
-        const radius = 58;
+        // Circumference of SoC circle (adjusted to new radius 38)
+        const radius = 38;
         const circumference = 2 * Math.PI * radius;
         socProgress.style.strokeDasharray = `${circumference} ${circumference}`;
         setSoC(0);
@@ -802,7 +796,7 @@
                 const devChartContainer = document.getElementById('deviation-chart-container');
                 devChartContainer.innerHTML = '';
                 
-                // Add horizontal axis guide in the middle
+                // Add horizontal axis guide in the middle (re-centered at 34px)
                 const axis = document.createElement('div');
                 axis.className = 'chart-axis';
                 devChartContainer.appendChild(axis);
@@ -811,11 +805,11 @@
                     if (cell.voltage > 0) {
                         const deviationMv = (cell.voltage - packAvg) * 1000;
                         const col = document.createElement('div');
-                        col.style.cssText = "flex: 1; min-width: 26px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; z-index: 1;";
+                        col.style.cssText = "flex: 1; min-width: 18px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; z-index: 1;";
                         
-                        // Max visual bounds (max 30px height instead of 50px)
+                        // Max visual bounds (scaled to max 18px height for micro design)
                         const maxScaleMv = Math.max(Math.abs(maxDevCell.val * 1000), Math.abs(minDevCell.val * 1000), 15);
-                        const barHeightPct = Math.min((Math.abs(deviationMv) / maxScaleMv) * 30, 30);
+                        const barHeightPct = Math.min((Math.abs(deviationMv) / maxScaleMv) * 18, 18);
                         
                         let barColor = 'var(--primary)';
                         let valColor = '#10b981';
@@ -842,31 +836,31 @@
                         
                         const isLastUpdated = (cell.cell_id === data.last_updated_cell_id);
                         const flashStyle = isLastUpdated 
-                            ? "background-color: #fff; box-shadow: 0 0 8px #fff; width: 22px; z-index: 5;" 
-                            : `background-color: ${barColor}; width: 18px;`;
+                            ? "background-color: #fff; box-shadow: 0 0 6px #fff; width: 14px; z-index: 5;" 
+                            : `background-color: ${barColor}; width: 10px;`;
                         
                         let topText = '&nbsp;';
-                        let bottomText = `<div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 1px;">#${cell.cell_id}</div>`;
+                        let bottomText = `<div style="color: var(--text-muted); font-size: 0.55rem; margin-top: 1px;">#${cell.cell_id}</div>`;
                         
                         let barStyle = '';
                         if (deviationMv >= 0) {
                             topText = `<span style="color: ${valColor}; font-weight: 600;">+${deviationMv.toFixed(0)}</span>`;
-                            barStyle = `bottom: 50%; height: ${barHeightPct}px; border-top-left-radius: 2px; border-top-right-radius: 2px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
+                            barStyle = `bottom: 50%; height: ${barHeightPct}px; border-top-left-radius: 1px; border-top-right-radius: 1px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
                         } else {
                             topText = '&nbsp;';
                             bottomText = `
                                 <span style="color: ${valColor}; font-weight: 600;">${deviationMv.toFixed(0)}</span>
-                                <div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 1px;">#${cell.cell_id}</div>
+                                <div style="color: var(--text-muted); font-size: 0.55rem; margin-top: 1px;">#${cell.cell_id}</div>
                             `;
-                            barStyle = `top: 50%; height: ${barHeightPct}px; border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
+                            barStyle = `top: 50%; height: ${barHeightPct}px; border-bottom-left-radius: 1px; border-bottom-right-radius: 1px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
                         }
                         
                         col.innerHTML = `
-                            <div style="font-size: 0.6rem; height: 12px; text-align: center;">${topText}</div>
-                            <div style="width: 100%; height: 60px; position: relative;">
+                            <div style="font-size: 0.55rem; height: 10px; text-align: center;">${topText}</div>
+                            <div style="width: 100%; height: 36px; position: relative;">
                                 <div style="${barStyle}"></div>
                             </div>
-                            <div style="font-size: 0.6rem; text-align: center; line-height: 1.1; height: 22px; display: flex; flex-direction: column; justify-content: flex-start;">${bottomText}</div>
+                            <div style="font-size: 0.55rem; text-align: center; line-height: 1.1; height: 16px; display: flex; flex-direction: column; justify-content: flex-start;">${bottomText}</div>
                         `;
                         
                         devChartContainer.appendChild(col);

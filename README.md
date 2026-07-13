@@ -21,12 +21,12 @@ Il permet :
 
 ### Étape 1 : Mettre le dépôt sur votre GitHub personnel
 
-Si vous souhaitez héberger ce code sur votre compte GitHub (par exemple sous le nom `Solar-Assistant_LTO`) :
+Si vous souhaitez héberger ce code sur votre compte GitHub (par exemple sous le nom `123SmartBMS_for_Solar_assistant`) :
 
 1. Créez un nouveau dépôt vide sur [GitHub](https://github.com/new).
 2. Ouvrez un terminal dans ce dossier sur votre Mac et associez-le à votre dépôt distant :
    ```bash
-   git remote add origin git@github.com:speriator/Solar-Assistant_LTO.git
+   git remote add origin git@github.com:speriator/123SmartBMS_for_Solar_assistant.git
    git branch -M main
    git push -u origin main
    ```
@@ -41,10 +41,10 @@ ssh solar-assistant@192.168.80.XXX
 Puis, téléchargez le dépôt et lancez l'installateur automatique en une seule commande :
 ```bash
 # 1. Cloner votre dépôt Git
-git clone https://github.com/speriator/Solar-Assistant_LTO.git
+git clone https://github.com/speriator/123SmartBMS_for_Solar_assistant.git
 
 # 2. Entrer dans le dossier et exécuter l'installateur
-cd Solar-Assistant_LTO
+cd 123SmartBMS_for_Solar_assistant
 sudo ./install.sh
 ```
 

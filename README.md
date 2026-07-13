@@ -2,6 +2,8 @@
 
 Ce dépôt Git contient l'intégration du BMS **123SmartBMS** (physiquement connecté au port série intégré du Raspberry Pi `/dev/ttyAMA0`) avec le dashboard **Solar-Assistant**.
 
+![Aperçu du Tableau de Bord](ScreenShot.png)
+
 Il permet :
 1. De générer un tableau de bord Web local (port `8080`) affichant les tensions et températures en temps réel.
 2. D'émuler un port série virtuel (**Daly BMS**) sur `/dev/ttyS9` pour renvoyer la télémétrie recalculée (y compris un SoC LTO précis pour Yinlong 400Ah) directement à Solar-Assistant.

@@ -87,7 +87,7 @@ graph TD
     end
 
     subgraph "Raspberry Pi 3 (Onboard UART)"
-        RPi_RX["GPIO 15 (RX / ttyAMA0)"]
+        RPi_RX["GPIO 15 (RX / Broche physique 10)"]
         RPi_3V3["3.3V (Pin 1 ou 17)"]
         RPi_GND["GND (Pin 6, 9, 14...)"]
         R2[Résistance Pull-up 1k Ω]
@@ -114,6 +114,6 @@ graph TD
    - Connectez la borne **DATA** du 123SmartBMS à la broche **1** (Anode) de l'optocoupleur via une résistance de **47 Ω**.
    - Connectez la borne **GND (B-)** du 123SmartBMS directement à la broche **2** (Cathode) de l'optocoupleur.
 2. **Côté Raspberry Pi :**
-   - Reliez la broche **5** (Collecteur) de l'optocoupleur à l'entrée série du Pi (**GPIO 15 / RX**) et tirez-la vers le **3.3V** du Pi via une résistance de pull-up de **1 kΩ**.
+   - Reliez la broche **5** (Collecteur) de l'optocoupleur à l'entrée série du Pi (**GPIO 15 / RX / Broche physique 10**) et tirez-la vers le **3.3V** du Pi via une résistance de pull-up de **1 kΩ**.
    - Reliez la broche **4** (Émetteur) de l'optocoupleur au **GND** du Raspberry Pi.
 

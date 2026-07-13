@@ -36,10 +36,10 @@
                               radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
             color: var(--text-color);
             min-height: 100vh;
-            padding: 2rem 1.5rem;
+            padding: 1rem 1rem;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1rem;
         }
 
         header {
@@ -47,11 +47,11 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--card-border);
-            padding-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: 800;
             background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
             -webkit-background-clip: text;
@@ -61,40 +61,40 @@
         .status-badge {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 9999px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .status-indicator {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background-color: var(--danger);
-            box-shadow: 0 0 8px var(--danger);
+            box-shadow: 0 0 6px var(--danger);
         }
 
         .status-indicator.online {
             background-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
+            box-shadow: 0 0 8px var(--primary);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        /* Dashboard Grid Layout */
+        /* Dashboard Grid Layout (narrower left column) */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 2rem;
+            grid-template-columns: 260px 1fr;
+            gap: 1rem;
         }
 
         @media (max-width: 1024px) {
@@ -108,41 +108,41 @@
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 1.5rem;
+            border-radius: 12px;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 1.2rem;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            gap: 0.8rem;
+            box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.2);
         }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-muted);
             letter-spacing: 0.05em;
             text-transform: uppercase;
         }
 
-        /* SoC Circle Gauge */
+        /* SoC Circle Gauge (shrunk size) */
         .soc-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 1rem 0;
+            padding: 0.5rem 0;
         }
 
         .soc-svg {
             transform: rotate(-90deg);
-            width: 200px;
-            height: 200px;
+            width: 140px;
+            height: 140px;
         }
 
         .soc-track, .soc-progress {
             fill: none;
-            stroke-width: 14;
+            stroke-width: 10;
         }
 
         .soc-track {
@@ -153,7 +153,7 @@
             stroke: var(--primary);
             stroke-linecap: round;
             transition: stroke-dashoffset 0.8s ease-in-out;
-            filter: drop-shadow(0 0 6px var(--primary));
+            filter: drop-shadow(0 0 4px var(--primary));
         }
 
         .soc-text-container {
@@ -165,88 +165,88 @@
         }
 
         .soc-value {
-            font-size: 3rem;
+            font-size: 2.2rem;
             font-weight: 800;
             line-height: 1;
         }
 
         .soc-unit {
-            font-size: 1.2rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
             font-weight: 600;
         }
 
         .soc-wh {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            margin-top: 0.2rem;
+            margin-top: 0.1rem;
         }
 
         /* Stats Grid (Quick numbers) */
         .stats-list {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.6rem;
         }
 
         .stat-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 1rem;
+            padding: 0.4rem 0.6rem;
             background: rgba(255, 255, 255, 0.015);
             border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
+            border-radius: 8px;
         }
 
         .stat-label {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
         }
 
         .stat-value {
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             font-weight: 600;
         }
 
-        /* Main Details grid (right side) */
+        /* Main Details panel */
         .details-panel {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1rem;
         }
 
         .metrics-summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.8rem;
         }
 
         .metric-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 1.2rem;
+            border-radius: 10px;
+            padding: 0.8rem;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.3rem;
         }
 
         .metric-card-header {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
         }
 
         .metric-card-value {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: #fff;
         }
 
         .metric-card-footer {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             display: flex;
             justify-content: space-between;
@@ -261,12 +261,12 @@
         .cells-summary-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 1rem;
             background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--card-border);
-            padding: 0.8rem 1.2rem;
-            border-radius: 14px;
-            font-size: 0.9rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
             color: var(--text-muted);
         }
 
@@ -275,43 +275,43 @@
             font-weight: 600;
         }
 
-        /* Deviation Chart */
+        /* Deviation Chart (shrunk) */
         .chart-axis {
             position: absolute;
             left: 0;
             right: 0;
-            top: 74px;
+            top: 48px;
             height: 1px;
             border-top: 1px dashed rgba(255, 255, 255, 0.15);
             pointer-events: none;
         }
 
-        /* Cells Grid layout */
+        /* Cells Grid layout (shrunk) */
         .cells-card {
             flex-grow: 1;
         }
 
         .cells-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
-            gap: 1.4rem 1rem; /* 1.4rem vertical gap to let space for the battery terminals on top */
-            margin-top: 1.2rem;
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            gap: 1rem 0.6rem;
+            margin-top: 0.6rem;
         }
 
-        /* Cell Box as a Battery Body */
+        /* Cell Box as a Battery Body (shrunk) */
         .cell-box {
             background: rgba(255, 255, 255, 0.02);
             border: 2px solid var(--card-border);
-            border-radius: 14px;
-            padding: 1rem 0.8rem;
+            border-radius: 10px;
+            padding: 0.6rem 0.4rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            gap: 0.35rem;
+            gap: 0.15rem;
             position: relative;
-            margin-top: 6px; /* Offset to make room for terminal */
+            margin-top: 5px;
             transition: all 0.3s ease;
         }
 
@@ -320,17 +320,17 @@
             border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
-        /* Battery "+" Terminal cap on top of card */
+        /* Battery "+" Terminal cap (shrunk) */
         .cell-terminal {
             position: absolute;
-            top: -7px;
+            top: -5px;
             left: 50%;
             transform: translateX(-50%);
-            width: 24px;
-            height: 6px;
+            width: 20px;
+            height: 5px;
             background: var(--card-border);
-            border-top-left-radius: 3px;
-            border-top-right-radius: 3px;
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
             border: 2px solid var(--card-border);
             border-bottom: none;
             transition: all 0.3s ease;
@@ -338,28 +338,28 @@
 
         /* Cells Texts inside card */
         .cell-number {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             z-index: 2;
         }
 
         .cell-voltage {
-            font-size: 1.25rem;
+            font-size: 1.05rem;
             font-weight: 800;
             z-index: 2;
             transition: color 0.3s ease;
         }
 
         .cell-deviation {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 600;
             z-index: 2;
             margin-top: -0.1rem;
         }
 
         .cell-temp {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
             z-index: 2;
         }
@@ -370,14 +370,14 @@
         }
 
         .cell-box.balancing {
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.1);
         }
         .cell-box.balancing .cell-voltage {
             color: #f59e0b;
         }
 
         .cell-box.critical {
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
             animation: border-flash 0.8s infinite alternate;
         }
         .cell-box.critical .cell-voltage {
@@ -386,8 +386,8 @@
         }
 
         @keyframes border-flash {
-            0% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.1); }
-            100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.35); }
+            0% { box-shadow: 0 0 6px rgba(239, 68, 68, 0.1); }
+            100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
         }
 
         @keyframes text-pulse {
@@ -402,8 +402,8 @@
 
         @keyframes cell-flash-anim {
             0% {
-                box-shadow: 0 0 18px rgba(255, 255, 255, 0.4);
-                transform: scale(1.04);
+                box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+                transform: scale(1.03);
                 z-index: 10;
             }
             100% {
@@ -446,33 +446,33 @@
         .bottom-panel {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            gap: 1rem;
         }
 
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            gap: 0.6rem;
         }
 
         .info-item {
             background: rgba(255, 255, 255, 0.015);
             border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            padding: 0.4rem 0.6rem;
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
+            gap: 0.1rem;
         }
 
         .info-lbl {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
         }
 
         .info-val {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 600;
         }
     </style>
@@ -485,7 +485,7 @@
     <header>
         <div>
             <h1>123\SmartBMS</h1>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.2rem;">Surveillance de la batterie LTO</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.1rem;">Surveillance de la batterie LTO</p>
         </div>
         <div class="status-badge">
             <div id="status-indicator" class="status-indicator"></div>
@@ -495,13 +495,13 @@
 
     <div class="dashboard-grid">
         <!-- Left Column: SoC & Basic Stats -->
-        <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
             <div class="card">
                 <span class="card-title">État de Charge</span>
                 <div class="soc-container">
                     <svg class="soc-svg">
-                        <circle class="soc-track" cx="100" cy="100" r="85"></circle>
-                        <circle id="soc-progress" class="soc-progress" cx="100" cy="100" r="85"></circle>
+                        <circle class="soc-track" cx="70" cy="70" r="58"></circle>
+                        <circle id="soc-progress" class="soc-progress" cx="70" cy="70" r="58"></circle>
                     </svg>
                     <div class="soc-text-container">
                         <div>
@@ -568,10 +568,10 @@
                 </div>
             </div>
 
-            <!-- Single-line Cell Deviation Profiler (Replaces warnings/status card) -->
-            <div class="card" style="gap: 0.8rem;">
+            <!-- Single-line Cell Deviation Profiler -->
+            <div class="card" style="gap: 0.6rem;">
                 <span class="card-title">Profil de Déviation des Cellules (Écart à la moyenne en mV)</span>
-                <div id="deviation-chart-container" style="display: flex; height: 160px; align-items: stretch; gap: 2px; padding: 10px 8px; background: rgba(0,0,0,0.2); border-radius: 14px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
+                <div id="deviation-chart-container" style="display: flex; height: 110px; align-items: stretch; gap: 2px; padding: 6px 8px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
                     <!-- 22 columns generated here -->
                 </div>
             </div>
@@ -589,7 +589,7 @@
                 </div>
 
                 <div id="cells-grid" class="cells-grid">
-                    <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">
+                    <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 1.5rem;">
                         Attente du signal UART de la batterie...
                     </div>
                 </div>
@@ -653,8 +653,8 @@
         const cellsGrid = document.getElementById('cells-grid');
         const doomOverlay = document.getElementById('doom-overlay');
 
-        // Circumference of SoC circle
-        const radius = 85;
+        // Circumference of SoC circle (adjusted to new radius 58)
+        const radius = 58;
         const circumference = 2 * Math.PI * radius;
         socProgress.style.strokeDasharray = `${circumference} ${circumference}`;
         setSoC(0);
@@ -811,11 +811,11 @@
                     if (cell.voltage > 0) {
                         const deviationMv = (cell.voltage - packAvg) * 1000;
                         const col = document.createElement('div');
-                        col.style.cssText = "flex: 1; min-width: 34px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; z-index: 1;";
+                        col.style.cssText = "flex: 1; min-width: 26px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; z-index: 1;";
                         
-                        // Max visual bounds: scale dynamic to largest deviation (min 15mV for visual comfort)
+                        // Max visual bounds (max 30px height instead of 50px)
                         const maxScaleMv = Math.max(Math.abs(maxDevCell.val * 1000), Math.abs(minDevCell.val * 1000), 15);
-                        const barHeightPct = Math.min((Math.abs(deviationMv) / maxScaleMv) * 50, 50); // maximum 50px (half chart height)
+                        const barHeightPct = Math.min((Math.abs(deviationMv) / maxScaleMv) * 30, 30);
                         
                         let barColor = 'var(--primary)';
                         let valColor = '#10b981';
@@ -842,31 +842,31 @@
                         
                         const isLastUpdated = (cell.cell_id === data.last_updated_cell_id);
                         const flashStyle = isLastUpdated 
-                            ? "background-color: #fff; box-shadow: 0 0 10px #fff; width: 30px; z-index: 5;" 
-                            : `background-color: ${barColor}; width: 26px;`;
+                            ? "background-color: #fff; box-shadow: 0 0 8px #fff; width: 22px; z-index: 5;" 
+                            : `background-color: ${barColor}; width: 18px;`;
                         
                         let topText = '&nbsp;';
-                        let bottomText = `<div style="color: var(--text-muted); font-size: 0.75rem; margin-top: 2px;">#${cell.cell_id}</div>`;
+                        let bottomText = `<div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 1px;">#${cell.cell_id}</div>`;
                         
                         let barStyle = '';
                         if (deviationMv >= 0) {
                             topText = `<span style="color: ${valColor}; font-weight: 600;">+${deviationMv.toFixed(0)}</span>`;
-                            barStyle = `bottom: 50%; height: ${barHeightPct}px; border-top-left-radius: 4px; border-top-right-radius: 4px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
+                            barStyle = `bottom: 50%; height: ${barHeightPct}px; border-top-left-radius: 2px; border-top-right-radius: 2px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
                         } else {
                             topText = '&nbsp;';
                             bottomText = `
                                 <span style="color: ${valColor}; font-weight: 600;">${deviationMv.toFixed(0)}</span>
-                                <div style="color: var(--text-muted); font-size: 0.75rem; margin-top: 2px;">#${cell.cell_id}</div>
+                                <div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 1px;">#${cell.cell_id}</div>
                             `;
-                            barStyle = `top: 50%; height: ${barHeightPct}px; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
+                            barStyle = `top: 50%; height: ${barHeightPct}px; border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; ${flashStyle}`;
                         }
                         
                         col.innerHTML = `
-                            <div style="font-size: 0.65rem; height: 14px; text-align: center;">${topText}</div>
-                            <div style="width: 100%; height: 100px; position: relative;">
+                            <div style="font-size: 0.6rem; height: 12px; text-align: center;">${topText}</div>
+                            <div style="width: 100%; height: 60px; position: relative;">
                                 <div style="${barStyle}"></div>
                             </div>
-                            <div style="font-size: 0.65rem; text-align: center; line-height: 1.1; height: 26px; display: flex; flex-direction: column; justify-content: flex-start;">${bottomText}</div>
+                            <div style="font-size: 0.6rem; text-align: center; line-height: 1.1; height: 22px; display: flex; flex-direction: column; justify-content: flex-start;">${bottomText}</div>
                         `;
                         
                         devChartContainer.appendChild(col);
@@ -905,12 +905,12 @@
                         // Fill percentage calculation based on Yinlong LTO discharge curve
                         const pct = calculateLTOSoC(cell.voltage);
 
-                        // Reset classification (keeps flash animation if running)
+                        // Reset classification
                         const wasFlashing = containerEl.classList.contains('flash-update');
                         containerEl.className = 'cell-box';
 
                         let fillColor = 'rgba(16, 185, 129, 0.14)'; // default green
-                        let statusColor = 'rgba(16, 185, 129, 0.25)';
+                        let statusColor = 'rgba(16, 185, 129, 0.22)';
                         let termColor = 'var(--primary)';
 
                         // Threshold testing
@@ -928,11 +928,11 @@
                         } else {
                             containerEl.classList.add('normal');
                             fillColor = 'rgba(16, 185, 129, 0.14)';
-                            statusColor = 'rgba(16, 185, 129, 0.25)';
+                            statusColor = 'rgba(16, 185, 129, 0.22)';
                             termColor = 'var(--primary)';
                         }
 
-                        // Apply dynamic style calculations directly to the card container
+                        // Apply dynamic styles for fill & border
                         containerEl.style.background = `linear-gradient(to top, ${fillColor} ${pct}%, rgba(255, 255, 255, 0.02) ${pct}%)`;
                         containerEl.style.borderColor = statusColor;
                         termEl.style.backgroundColor = termColor;

@@ -665,6 +665,38 @@
             socValue.innerText = percent;
         }
 
+        function calculateLTOSoC(voltage) {
+            const lut = [
+                [1.50, 0],
+                [1.85, 5],
+                [2.00, 10],
+                [2.15, 20],
+                [2.20, 35],
+                [2.23, 50],
+                [2.27, 65],
+                [2.32, 75],
+                [2.40, 82],
+                [2.50, 90],
+                [2.60, 96],
+                [2.65, 99],
+                [2.70, 100]
+            ];
+            
+            if (voltage <= lut[0][0]) return 0;
+            if (voltage >= lut[lut.length - 1][0]) return 100;
+            
+            for (let i = 0; i < lut.length - 1; i++) {
+                const v0 = lut[i][0];
+                const s0 = lut[i][1];
+                const v1 = lut[i+1][0];
+                const s1 = lut[i+1][1];
+                if (voltage >= v0 && voltage < v1) {
+                    return s0 + (voltage - v0) * (s1 - s0) / (v1 - v0);
+                }
+            }
+            return 100;
+        }
+
         // Keep track of cell layout state
         let cellsInitialized = false;
 
@@ -870,8 +902,8 @@
                         const vMax = data.v_max_setting || 2.8;
                         const vBalance = data.v_balance_setting || 2.50;
 
-                        // Fill percentage calculation (maps cell voltage to the card background fill)
-                        const pct = Math.min(Math.max(((cell.voltage - vMin) / (vMax - vMin)) * 100, 0), 100);
+                        // Fill percentage calculation based on Yinlong LTO discharge curve
+                        const pct = calculateLTOSoC(cell.voltage);
 
                         // Reset classification (keeps flash animation if running)
                         const wasFlashing = containerEl.classList.contains('flash-update');

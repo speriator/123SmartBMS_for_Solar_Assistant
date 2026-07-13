@@ -47,7 +47,7 @@ latest_data = {
     "vfull_setting": None,
     
     # Full cell array
-    "cells": []
+    "cells": [{"cell_id": i + 1, "voltage": 0.0, "temp": 0, "last_update": 0} for i in range(22)]
 }
 
 # Lock for multi-threaded access to global data
@@ -411,12 +411,206 @@ def run_web_server(port=8080):
         print("[HTTP] Server stopped.")
 
 
+def daly_emulator_thread():
+    port = "/dev/ttyBMS_backend"
+    baud = 9600
+    print(f"[Daly Emulator] Opening {port} at {baud} bps...")
+    
+    while True:
+        try:
+            ser = serial.Serial(
+                port=port,
+                baudrate=baud,
+                bytesize=serial.EIGHTBITS,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                timeout=0.5
+            )
+            print("[Daly Emulator] Connected successfully!")
+            break
+        except Exception as e:
+            print(f"[Daly Emulator] Error opening port {port}: {e}. Retrying in 5s...")
+            time.sleep(5)
+            
+    buffer = bytearray()
+    life_cycle = 0
+    
+    while True:
+        try:
+            # Read from PTY
+            data = ser.read(ser.in_waiting or 1)
+            if data:
+                buffer.extend(data)
+                
+            # A Daly request frame is 13 bytes
+            while len(buffer) >= 13:
+                # Find start byte (0xA5) and destination address (0x40)
+                start_idx = -1
+                for i in range(len(buffer) - 1):
+                    if buffer[i] == 0xA5 and buffer[i+1] == 0x40:
+                        start_idx = i
+                        break
+                        
+                if start_idx == -1:
+                    if len(buffer) > 0:
+                        last_byte = buffer[-1]
+                        buffer.clear()
+                        if last_byte == 0xA5:
+                            buffer.append(0xA5)
+                    break
+                    
+                if start_idx > 0:
+                    del buffer[:start_idx]
+                    
+                if len(buffer) < 13:
+                    break
+                    
+                # Validate checksum of the 13-byte query
+                calc_sum = sum(buffer[:12]) & 0xFF
+                exp_sum = buffer[12]
+                
+                if calc_sum == exp_sum:
+                    query = bytes(buffer[:13])
+                    del buffer[:13]
+                    
+                    cmd = query[2]
+                    
+                    # Prepare response
+                    response_data = bytearray(8)
+                    
+                    with data_lock:
+                        total_v = latest_data["total_voltage"]
+                        curr_total = latest_data["current_total"]
+                        soc = latest_data["soc_pct"]
+                        v_highest = latest_data["v_highest"]
+                        c_highest = latest_data["cell_v_highest"]
+                        v_lowest = latest_data["v_lowest"]
+                        c_lowest = latest_data["cell_v_lowest"]
+                        t_highest = latest_data["t_highest"]
+                        t_lowest = latest_data["t_lowest"]
+                        status_flags = latest_data["status_flags_1"]
+                        cells = latest_data["cells"]
+                        nr_of_cells = latest_data["nr_of_cells"] if latest_data["nr_of_cells"] > 0 else 22
+                    
+                    if cmd == 0x90:
+                        # Voltage, Current, SOC
+                        val_v = int(round(total_v * 10))
+                        response_data[0:2] = val_v.to_bytes(2, byteorder='big')
+                        response_data[2:4] = val_v.to_bytes(2, byteorder='big')
+                        
+                        val_c = int(round(curr_total * 10)) + 30000
+                        response_data[4:6] = val_c.to_bytes(2, byteorder='big')
+                        
+                        val_soc = int(round(soc * 10))
+                        response_data[6:8] = val_soc.to_bytes(2, byteorder='big')
+                        
+                    elif cmd == 0x91:
+                        # Min/Max Cell Voltages
+                        val_max_v = int(round(v_highest * 1000))
+                        response_data[0:2] = val_max_v.to_bytes(2, byteorder='big')
+                        response_data[2] = c_highest
+                        
+                        val_min_v = int(round(v_lowest * 1000))
+                        response_data[3:5] = val_min_v.to_bytes(2, byteorder='big')
+                        response_data[5] = c_lowest
+                        
+                    elif cmd == 0x92:
+                        # Temperatures (offset by 40)
+                        response_data[0] = max(0, min(255, int(t_highest) + 40))
+                        response_data[1] = 1
+                        response_data[2] = max(0, min(255, int(t_lowest) + 40))
+                        response_data[3] = 1
+                        
+                    elif cmd == 0x93:
+                        # MOS Status & Capacity
+                        chg_mos = 1 if "Allow to charge" in status_flags else 0
+                        dis_mos = 1 if "Allow to discharge" in status_flags else 0
+                        
+                        if curr_total > 0.5:
+                            bms_state = 1
+                        elif curr_total < -0.5:
+                            bms_state = 2
+                        else:
+                            bms_state = 0
+                            
+                        response_data[0] = chg_mos
+                        response_data[1] = dis_mos
+                        response_data[2] = bms_state
+                        
+                        life_cycle = (life_cycle + 1) % 256
+                        response_data[3] = life_cycle
+                        
+                        rem_cap_mah = int(round(soc * 4000)) # 400Ah capacity -> 400000mAh * (soc/100)
+                        response_data[4:8] = rem_cap_mah.to_bytes(4, byteorder='big')
+                        
+                    elif cmd == 0x94:
+                        # Status Info
+                        response_data[0] = nr_of_cells
+                        response_data[1] = 2
+                        response_data[2] = 1 if "Allow to charge" in status_flags else 0
+                        response_data[3] = 1 if "Allow to discharge" in status_flags else 0
+                        response_data[4] = 0x00
+                        
+                    elif cmd == 0x95:
+                        # Cell Voltages (3 cells per frame)
+                        frame_num = query[4]
+                        response_data[0] = frame_num
+                        
+                        start_cell_idx = (frame_num - 1) * 3
+                        for i in range(3):
+                            cell_idx = start_cell_idx + i
+                            if cell_idx < len(cells):
+                                cv = int(round(cells[cell_idx]["voltage"] * 1000))
+                            else:
+                                cv = 0
+                            response_data[1 + i*2 : 3 + i*2] = cv.to_bytes(2, byteorder='big')
+                            
+                    elif cmd == 0x96:
+                        # Cell Temperatures
+                        frame_num = query[4]
+                        response_data[0] = frame_num
+                        t1 = max(0, min(255, int(t_highest) + 40))
+                        t2 = max(0, min(255, int(t_lowest) + 40))
+                        response_data[1] = t1
+                        response_data[2] = t2
+                        
+                    elif cmd == 0x97:
+                        # Balance status
+                        response_data[0:4] = b'\x00\x00\x00\x00'
+                        
+                    elif cmd == 0x98:
+                        # Alarm status
+                        response_data[0:8] = b'\x00\x00\x00\x00\x00\x00\x00\x00'
+                        
+                    else:
+                        continue
+                        
+                    # Build response frame
+                    resp_frame = bytearray([0xA5, 0x01, cmd, 0x08])
+                    resp_frame.extend(response_data)
+                    checksum = sum(resp_frame) & 0xFF
+                    resp_frame.append(checksum)
+                    
+                    ser.write(resp_frame)
+                else:
+                    buffer.pop(0)
+                    
+            time.sleep(0.01)
+        except Exception as e:
+            print(f"[Daly Emulator] Exception: {e}")
+            buffer.clear()
+            time.sleep(1)
+
 def main():
     # 1. Start UART reading thread
     reader = threading.Thread(target=serial_reader_thread, daemon=True)
     reader.start()
     
-    # 2. Run HTTP server in main thread
+    # 2. Start Daly emulator thread
+    emulator = threading.Thread(target=daly_emulator_thread, daemon=True)
+    emulator.start()
+    
+    # 3. Run HTTP server in main thread
     run_web_server(port=8080)
 
 if __name__ == "__main__":

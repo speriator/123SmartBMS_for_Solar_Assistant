@@ -26,7 +26,7 @@ Si vous souhaitez héberger ce code sur votre compte GitHub (par exemple sous le
 1. Créez un nouveau dépôt vide sur [GitHub](https://github.com/new).
 2. Ouvrez un terminal dans ce dossier sur votre Mac et associez-le à votre dépôt distant :
    ```bash
-   git remote add origin git@github.com:VOTRE_NOM_UTILISATEUR/Solar-Assistant_LTO.git
+   git remote add origin git@github.com:speriator/Solar-Assistant_LTO.git
    git branch -M main
    git push -u origin main
    ```
@@ -41,7 +41,7 @@ ssh solar-assistant@192.168.80.XXX
 Puis, téléchargez le dépôt et lancez l'installateur automatique en une seule commande :
 ```bash
 # 1. Cloner votre dépôt Git
-git clone https://github.com/VOTRE_NOM_UTILISATEUR/Solar-Assistant_LTO.git
+git clone https://github.com/speriator/Solar-Assistant_LTO.git
 
 # 2. Entrer dans le dossier et exécuter l'installateur
 cd Solar-Assistant_LTO

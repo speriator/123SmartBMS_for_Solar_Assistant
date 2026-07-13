@@ -293,66 +293,47 @@
 
         .cells-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 1rem;
-            margin-top: 0.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+            gap: 1.4rem 1rem; /* 1.4rem vertical gap to let space for the battery terminals on top */
+            margin-top: 1.2rem;
         }
 
+        /* Cell Box as a Battery Body */
         .cell-box {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--card-border);
+            border: 2px solid var(--card-border);
             border-radius: 14px;
-            padding: 0.8rem;
+            padding: 1rem 0.8rem;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.8rem;
+            justify-content: center;
+            text-align: center;
+            gap: 0.35rem;
             position: relative;
+            margin-top: 6px; /* Offset to make room for terminal */
             transition: all 0.3s ease;
         }
 
         .cell-box:hover {
             transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
-        /* Vertical Battery Icon Style */
-        .battery-icon {
-            width: 20px;
-            height: 46px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .battery-terminal {
-            width: 6px;
-            height: 3px;
-            background: var(--text-muted);
-            border-top-left-radius: 1px;
-            border-top-right-radius: 1px;
-            transition: background-color 0.3s ease;
-        }
-
-        .battery-body {
-            width: 100%;
-            flex-grow: 1;
-            border: 2px solid var(--text-muted);
-            border-radius: 4px;
-            padding: 1px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end; /* Fill bottom to top */
-            background: rgba(255, 255, 255, 0.01);
-            transition: border-color 0.3s ease;
-        }
-
-        .battery-fill {
-            width: 100%;
-            height: 0%;
-            background-color: var(--primary);
-            border-radius: 1px;
-            transition: height 0.5s ease, background-color 0.5s ease;
+        /* Battery "+" Terminal cap on top of card */
+        .cell-terminal {
+            position: absolute;
+            top: -7px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 6px;
+            background: var(--card-border);
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            border: 2px solid var(--card-border);
+            border-bottom: none;
+            transition: all 0.3s ease;
         }
 
         /* Cells Texts inside card */
@@ -360,66 +341,44 @@
             font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-muted);
+            z-index: 2;
         }
 
         .cell-voltage {
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             font-weight: 800;
+            z-index: 2;
             transition: color 0.3s ease;
         }
 
         .cell-deviation {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
+            z-index: 2;
             margin-top: -0.1rem;
         }
 
         .cell-temp {
             font-size: 0.75rem;
             color: var(--text-muted);
+            z-index: 2;
         }
 
-        /* Cell Color Statuses mapping to battery outline & text */
-        .cell-box.normal {
-            background: rgba(16, 185, 129, 0.06);
-            border-color: rgba(16, 185, 129, 0.25);
-        }
-        .cell-box.normal .battery-body {
-            border-color: var(--primary);
-        }
-        .cell-box.normal .battery-terminal {
-            background-color: var(--primary);
-        }
+        /* Cell Color Statuses mapping to text colors */
         .cell-box.normal .cell-voltage {
             color: #10b981;
         }
 
         .cell-box.balancing {
-            background: rgba(245, 158, 11, 0.1);
-            border-color: var(--warning);
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
-        }
-        .cell-box.balancing .battery-body {
-            border-color: var(--warning);
-        }
-        .cell-box.balancing .battery-terminal {
-            background-color: var(--warning);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
         }
         .cell-box.balancing .cell-voltage {
             color: #f59e0b;
         }
 
         .cell-box.critical {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: var(--danger);
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
             animation: border-flash 0.8s infinite alternate;
-        }
-        .cell-box.critical .battery-body {
-            border-color: var(--danger);
-        }
-        .cell-box.critical .battery-terminal {
-            background-color: var(--danger);
         }
         .cell-box.critical .cell-voltage {
             color: #ff6b6b;
@@ -427,12 +386,12 @@
         }
 
         @keyframes border-flash {
-            0% { border-color: rgba(239, 68, 68, 0.4); }
-            100% { border-color: rgba(239, 68, 68, 1); }
+            0% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.1); }
+            100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.35); }
         }
 
         @keyframes text-pulse {
-            0% { opacity: 0.8; }
+            0% { opacity: 0.85; }
             100% { opacity: 1; }
         }
 
@@ -443,9 +402,8 @@
 
         @keyframes cell-flash-anim {
             0% {
-                background: rgba(255, 255, 255, 0.15);
-                box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
-                transform: scale(1.03);
+                box-shadow: 0 0 18px rgba(255, 255, 255, 0.4);
+                transform: scale(1.04);
                 z-index: 10;
             }
             100% {
@@ -760,18 +718,11 @@
                         cellDiv.id = `cell-container-${cell.cell_id}`;
                         
                         cellDiv.innerHTML = `
-                            <div class="battery-icon">
-                                <div class="battery-terminal" id="cell-term-${cell.cell_id}"></div>
-                                <div class="battery-body" id="cell-body-${cell.cell_id}">
-                                    <div class="battery-fill" id="cell-fill-${cell.cell_id}"></div>
-                                </div>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.1rem; flex-grow: 1;">
-                                <span class="cell-number">Cellule #${cell.cell_id}</span>
-                                <span class="cell-voltage" id="cell-v-${cell.cell_id}">- V</span>
-                                <span class="cell-deviation" id="cell-dev-${cell.cell_id}">-</span>
-                                <span class="cell-temp" id="cell-t-${cell.cell_id}">- °C</span>
-                            </div>
+                            <div class="cell-terminal" id="cell-term-${cell.cell_id}"></div>
+                            <span class="cell-number">Cellule #${cell.cell_id}</span>
+                            <span class="cell-voltage" id="cell-v-${cell.cell_id}">- V</span>
+                            <span class="cell-deviation" id="cell-dev-${cell.cell_id}">-</span>
+                            <span class="cell-temp" id="cell-t-${cell.cell_id}">- °C</span>
                         `;
                         cellsGrid.appendChild(cellDiv);
                     });
@@ -898,9 +849,7 @@
                     const vEl = document.getElementById(`cell-v-${cell.cell_id}`);
                     const devEl = document.getElementById(`cell-dev-${cell.cell_id}`);
                     const tEl = document.getElementById(`cell-t-${cell.cell_id}`);
-                    const fillEl = document.getElementById(`cell-fill-${cell.cell_id}`);
                     const containerEl = document.getElementById(`cell-container-${cell.cell_id}`);
-                    const bodyEl = document.getElementById(`cell-body-${cell.cell_id}`);
                     const termEl = document.getElementById(`cell-term-${cell.cell_id}`);
 
                     if (cell.voltage > 0) {
@@ -921,39 +870,43 @@
                         const vMax = data.v_max_setting || 2.8;
                         const vBalance = data.v_balance_setting || 2.50;
 
-                        // Fill percentage calculation (for the vertical battery height)
+                        // Fill percentage calculation (maps cell voltage to the card background fill)
                         const pct = Math.min(Math.max(((cell.voltage - vMin) / (vMax - vMin)) * 100, 0), 100);
-                        fillEl.style.height = `${pct}%`;
 
                         // Reset classification (keeps flash animation if running)
                         const wasFlashing = containerEl.classList.contains('flash-update');
                         containerEl.className = 'cell-box';
 
-                        // Reset dynamic style attributes on battery outlines
-                        bodyEl.style.borderColor = '';
-                        termEl.style.backgroundColor = '';
-                        fillEl.style.backgroundColor = '';
+                        let fillColor = 'rgba(16, 185, 129, 0.14)'; // default green
+                        let statusColor = 'rgba(16, 185, 129, 0.25)';
+                        let termColor = 'var(--primary)';
 
                         // Threshold testing
                         if (cell.voltage <= vMin || cell.voltage >= vMax) {
                             containerEl.classList.add('critical');
-                            bodyEl.style.borderColor = 'var(--danger)';
-                            termEl.style.backgroundColor = 'var(--danger)';
-                            fillEl.style.backgroundColor = 'var(--danger)';
+                            fillColor = 'rgba(239, 68, 68, 0.22)';
+                            statusColor = 'var(--danger)';
+                            termColor = 'var(--danger)';
                             anyCritical = true;
                         } else if (cell.voltage >= vBalance) {
                             containerEl.classList.add('balancing');
-                            bodyEl.style.borderColor = 'var(--warning)';
-                            termEl.style.backgroundColor = 'var(--warning)';
-                            fillEl.style.backgroundColor = 'var(--warning)';
+                            fillColor = 'rgba(245, 158, 11, 0.16)';
+                            statusColor = 'var(--warning)';
+                            termColor = 'var(--warning)';
                         } else {
                             containerEl.classList.add('normal');
-                            bodyEl.style.borderColor = 'var(--primary)';
-                            termEl.style.backgroundColor = 'var(--primary)';
-                            fillEl.style.backgroundColor = 'var(--primary)';
+                            fillColor = 'rgba(16, 185, 129, 0.14)';
+                            statusColor = 'rgba(16, 185, 129, 0.25)';
+                            termColor = 'var(--primary)';
                         }
 
-                        // Apply flash update class if it matches the last updated cell
+                        // Apply dynamic style calculations directly to the card container
+                        containerEl.style.background = `linear-gradient(to top, ${fillColor} ${pct}%, rgba(255, 255, 255, 0.02) ${pct}%)`;
+                        containerEl.style.borderColor = statusColor;
+                        termEl.style.backgroundColor = termColor;
+                        termEl.style.borderColor = termColor;
+
+                        // Apply flash update class
                         if (cell.cell_id === data.last_updated_cell_id) {
                             containerEl.classList.add('flash-update');
                         } else if (wasFlashing) {

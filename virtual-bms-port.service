@@ -1,0 +1,12 @@
+[Unit]
+Description=Virtual BMS Serial Port Bridge
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/socat PTY,link=/dev/ttyUSB9,raw,echo=0,mode=666 PTY,link=/dev/ttyBMS_backend,raw,echo=0,mode=666
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

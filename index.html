@@ -565,7 +565,7 @@
             <!-- Single-line Cell Deviation Profiler -->
             <div class="card" style="gap: 0.4rem;">
                 <span class="card-title">Profil de Déviation des Cellules (Écart à la moyenne en mV)</span>
-                <div id="deviation-chart-container" style="display: flex; height: 74px; align-items: stretch; gap: 1px; padding: 6px 4px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
+                <div id="deviation-chart-container" style="display: flex; height: 74px; align-items: stretch; gap: 2px; padding: 6px 8px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
                     <!-- 22 columns generated here -->
                 </div>
             </div>
@@ -805,7 +805,7 @@
                     if (cell.voltage > 0) {
                         const deviationMv = (cell.voltage - packAvg) * 1000;
                         const col = document.createElement('div');
-                        col.style.cssText = "flex: 1; min-width: 18px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; z-index: 1;";
+                        col.style.cssText = "flex: 1; min-width: 32px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; z-index: 1;";
                         
                         // Max visual bounds (scaled to max 18px height for micro design)
                         const maxScaleMv = Math.max(Math.abs(maxDevCell.val * 1000), Math.abs(minDevCell.val * 1000), 15);
@@ -836,8 +836,8 @@
                         
                         const isLastUpdated = (cell.cell_id === data.last_updated_cell_id);
                         const flashStyle = isLastUpdated 
-                            ? "background-color: #fff; box-shadow: 0 0 6px #fff; width: 14px; z-index: 5;" 
-                            : `background-color: ${barColor}; width: 10px;`;
+                            ? "background-color: #fff; box-shadow: 0 0 6px #fff; width: 28px; z-index: 5;" 
+                            : `background-color: ${barColor}; width: 24px;`;
                         
                         let topText = '&nbsp;';
                         let bottomText = `<div style="color: var(--text-muted); font-size: 0.55rem; margin-top: 1px;">#${cell.cell_id}</div>`;

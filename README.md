@@ -62,3 +62,58 @@ sudo reboot
 3. Dans la liste déroulante des ports USB, sélectionnez **ttyS9** (ou `serial8250`).
 4. Cliquez sur **Connect**.
 5. Les tensions individuelles de vos 22 cellules et le SoC précis apparaîtront instantanément !
+
+---
+
+## 🔌 Schéma de Câblage Matériel (123SmartBMS -> Raspberry Pi)
+
+Le signal série de la carte de fin du **123SmartBMS** est **physiquement inversé**. Pour le relier au port UART intégré du Raspberry Pi (`ttyAMA0` / GPIO 15), il est nécessaire de réaliser un montage d'isolation et d'inversion à l'aide d'un optocoupleur (ex: **4N35**).
+
+Voici le schéma de connexion logique :
+
+```mermaid
+graph TD
+    subgraph "Pack Batterie 1 (123SmartBMS)"
+        BMS_DATA["End Board DATA (Flottant)"]
+        BMS_GND["End Board GND (B-)"]
+    end
+
+    subgraph "Optocoupleur 4N35 (Isolation & Inversion)"
+        R1[Résistance 47 Ω]
+        LED_IN["Pin 1: Anode"]
+        LED_OUT["Pin 2: Cathode"]
+        TRANS_COL["Pin 5: Collecteur"]
+        TRANS_EM["Pin 4: Émetteur"]
+    end
+
+    subgraph "Raspberry Pi 3 (Onboard UART)"
+        RPi_RX["GPIO 15 (RX / ttyAMA0)"]
+        RPi_3V3["3.3V (Pin 1 ou 17)"]
+        RPi_GND["GND (Pin 6, 9, 14...)"]
+        R2[Résistance Pull-up 1k Ω]
+    end
+
+    BMS_DATA --> R1 --> LED_IN
+    BMS_GND --> LED_OUT
+    
+    RPi_3V3 --> R2
+    R2 --> RPi_RX
+    RPi_RX --> TRANS_COL
+    RPi_GND --> TRANS_EM
+
+    classDef bms fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px;
+    classDef opto fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+    classDef rpi fill:#ffebee,stroke:#f44336,stroke-width:2px;
+    class BMS_DATA,BMS_GND bms;
+    class R1,LED_IN,LED_OUT,TRANS_COL,TRANS_EM opto;
+    class RPi_RX,RPi_3V3,RPi_GND,R2 rpi;
+```
+
+### Détails des Connexions :
+1. **Côté BMS :**
+   - Connectez la borne **DATA** du 123SmartBMS à la broche **1** (Anode) de l'optocoupleur via une résistance de **47 Ω**.
+   - Connectez la borne **GND (B-)** du 123SmartBMS directement à la broche **2** (Cathode) de l'optocoupleur.
+2. **Côté Raspberry Pi :**
+   - Reliez la broche **5** (Collecteur) de l'optocoupleur à l'entrée série du Pi (**GPIO 15 / RX**) et tirez-la vers le **3.3V** du Pi via une résistance de pull-up de **1 kΩ**.
+   - Reliez la broche **4** (Émetteur) de l'optocoupleur au **GND** du Raspberry Pi.
+

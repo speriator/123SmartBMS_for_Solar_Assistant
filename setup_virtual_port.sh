@@ -34,9 +34,13 @@ cp -P /sys/class/tty/* /dev/shm/sys_class_tty/
 
 # 5. Create fake ttyS9 entry in shm
 mkdir -p /dev/shm/sys_devices_virtual_tty_ttyS9
+rm -rf /dev/shm/sys_devices_virtual_tty_ttyS9/*
+# Copy all parameters from ttyAMA0
+cp -r /sys/class/tty/ttyAMA0/* /dev/shm/sys_devices_virtual_tty_ttyS9/ 2>/dev/null || true
+
+# Overwrite dev and device symlink with our values
 echo "${MAJOR_DEC}:${MINOR_DEC}" > /dev/shm/sys_devices_virtual_tty_ttyS9/dev
-echo "DRIVER=serial8250" > /dev/shm/sys_devices_virtual_tty_ttyS9/uevent
-ln -sf ../../../../sys/devices/platform/serial8250 /dev/shm/sys_devices_virtual_tty_ttyS9/device
+ln -sf ../../../../sys/devices/platform/soc/3f201000.serial /dev/shm/sys_devices_virtual_tty_ttyS9/device
 
 # Link it into sys_class_tty
 ln -sf ../../../dev/shm/sys_devices_virtual_tty_ttyS9 /dev/shm/sys_class_tty/ttyS9

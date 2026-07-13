@@ -4,7 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/socat PTY,link=/dev/ttyUSB9,raw,echo=0,mode=666 PTY,link=/dev/ttyBMS_backend,raw,echo=0,mode=666
+ExecStart=/bin/bash /home/solar-assistant/setup_virtual_port.sh
+ExecStop=/bin/umount /sys/class/tty
 Restart=always
 RestartSec=5
 

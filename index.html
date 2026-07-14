@@ -370,10 +370,10 @@
         }
 
         .cell-box.balancing {
-            box-shadow: 0 0 4px rgba(245, 158, 11, 0.1);
+            box-shadow: 0 0 4px rgba(74, 222, 128, 0.2);
         }
         .cell-box.balancing .cell-voltage {
-            color: #f59e0b;
+            color: #4ade80;
         }
 
         .cell-box.critical {
@@ -890,6 +890,10 @@
                 axis.className = 'chart-axis';
                 devChartContainer.appendChild(axis);
                 
+                const vMin = data.v_min_setting || 2.0;
+                const vMax = data.v_max_setting || 2.8;
+                const vBalance = data.v_balance_setting || 2.50;
+
                 cells.forEach(cell => {
                     if (cell.voltage > 0) {
                         const deviationMv = (cell.voltage - packAvg) * 1000;
@@ -903,23 +907,22 @@
                         let barColor = 'var(--primary)';
                         let valColor = '#10b981';
                         
-                        if (deviationMv >= 0) {
+                        const isCellCritical = (cell.voltage <= vMin || cell.voltage >= vMax || (cell.voltage - packAvg) <= -0.008 || cell.voltage > (vBalance + 0.010));
+                        const isCellBalancing = (!isCellCritical && cell.voltage >= vBalance);
+
+                        if (isCellCritical) {
+                            barColor = 'var(--danger)';
+                            valColor = '#ef4444';
+                        } else if (isCellBalancing) {
+                            barColor = '#4ade80';
+                            valColor = '#4ade80';
+                        } else {
                             if (deviationMv > 15) {
                                 barColor = 'var(--warning)';
                                 valColor = '#f59e0b';
-                            }
-                            if (cell.voltage >= (data.v_max_setting || 2.8)) {
-                                barColor = 'var(--danger)';
-                                valColor = '#ef4444';
-                            }
-                        } else {
-                            if (deviationMv < -15) {
+                            } else if (deviationMv < -15) {
                                 barColor = 'var(--secondary)';
                                 valColor = '#06b6d4';
-                            }
-                            if (cell.voltage <= (data.v_min_setting || 2.0)) {
-                                barColor = 'var(--danger)';
-                                valColor = '#ef4444';
                             }
                         }
                         
@@ -994,17 +997,17 @@
                         let termColor = 'var(--primary)';
 
                         // Threshold testing
-                        if (cell.voltage <= vMin || cell.voltage >= vMax || cell.voltage <= (packAvg - 0.008)) {
+                        if (cell.voltage <= vMin || cell.voltage >= vMax || cell.voltage <= (packAvg - 0.008) || cell.voltage > (vBalance + 0.010)) {
                             containerEl.classList.add('critical');
                             fillColor = 'rgba(239, 68, 68, 0.22)';
                             statusColor = 'var(--danger)';
                             termColor = 'var(--danger)';
                             anyCritical = true;
-                        } else if (cell.voltage >= (vBalance + 0.008)) {
+                        } else if (cell.voltage >= vBalance) {
                             containerEl.classList.add('balancing');
-                            fillColor = 'rgba(245, 158, 11, 0.16)';
-                            statusColor = 'var(--warning)';
-                            termColor = 'var(--warning)';
+                            fillColor = 'rgba(74, 222, 128, 0.16)';
+                            statusColor = '#4ade80';
+                            termColor = '#4ade80';
                         } else {
                             containerEl.classList.add('normal');
                             fillColor = 'rgba(16, 185, 129, 0.14)';

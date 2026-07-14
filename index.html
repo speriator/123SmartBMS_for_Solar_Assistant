@@ -391,36 +391,7 @@
 
 
 
-        /* DOOM Vignette flashing screen overlay */
-        .doom-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 99999;
-            box-shadow: inset 0 0 0px rgba(239, 68, 68, 0);
-            background: rgba(239, 68, 68, 0);
-            transition: all 0.3s ease;
-            visibility: hidden;
-        }
 
-        .doom-overlay.active {
-            visibility: visible;
-            animation: doom-flash 0.5s infinite alternate;
-        }
-
-        @keyframes doom-flash {
-            0% {
-                box-shadow: inset 0 0 80px rgba(239, 68, 68, 0.45);
-                background: rgba(239, 68, 68, 0.04);
-            }
-            100% {
-                box-shadow: inset 0 0 200px rgba(239, 68, 68, 0.85);
-                background: rgba(239, 68, 68, 0.18);
-            }
-        }
 
         /* Settings and info bottom cards */
         .bottom-panel {
@@ -459,8 +430,7 @@
 </head>
 <body>
 
-    <!-- DOOM Damage Effect Overlay -->
-    <div id="doom-overlay" class="doom-overlay"></div>
+
 
     <header>
         <div>
@@ -703,7 +673,7 @@
         const socWh = document.getElementById('soc-wh');
         const socProgress = document.getElementById('soc-progress');
         const cellsGrid = document.getElementById('cells-grid');
-        const doomOverlay = document.getElementById('doom-overlay');
+
 
         // Circumference of SoC circle (adjusted to new radius 38)
         const radius = 38;
@@ -1052,12 +1022,7 @@
                     }
                 });
 
-                // Trigger DOOM red flashing screen vignette overlay on critical thresholds
-                if (anyCritical) {
-                    doomOverlay.classList.add('active');
-                } else {
-                    doomOverlay.classList.remove('active');
-                }
+
             }
         }
 

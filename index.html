@@ -562,6 +562,33 @@
                 </div>
             </div>
 
+            <!-- Solar-Assistant Inverter Metrics -->
+            <div class="metrics-summary-grid">
+                <div class="metric-card">
+                    <span class="metric-card-header">Production Solaire (PV)</span>
+                    <span id="sa-pv-power" class="metric-card-value">0 W</span>
+                    <div class="metric-card-footer">
+                        <span>Solar-Assistant</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <span class="metric-card-header">Puissance Charge (Load)</span>
+                    <span id="sa-load-power" class="metric-card-value">0 W</span>
+                    <div class="metric-card-footer">
+                        <span>Consommation active</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <span class="metric-card-header">Flux Batterie (SA)</span>
+                    <span id="sa-battery-power" class="metric-card-value">0 W</span>
+                    <div class="metric-card-footer">
+                        <span id="sa-battery-status" class="footer-highlight">Repos</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Single-line Cell Deviation Profiler -->
             <div class="card" style="gap: 0.4rem;">
                 <span class="card-title">Profil de Déviation des Cellules (Écart à la moyenne en mV)</span>
@@ -720,6 +747,29 @@
             document.getElementById('temp-max').innerText = `${data.t_highest} °C`;
             document.getElementById('temp-min-lbl').innerText = `${data.t_lowest} °C (#${data.cell_t_lowest})`;
             document.getElementById('temp-max-lbl').innerText = `${data.t_highest} °C (#${data.cell_t_highest})`;
+
+            // Solar-Assistant Metrics
+            if (data.sa_pv_power !== undefined) {
+                document.getElementById('sa-pv-power').innerText = `${data.sa_pv_power} W`;
+            }
+            if (data.sa_load_power !== undefined) {
+                document.getElementById('sa-load-power').innerText = `${data.sa_load_power} W`;
+            }
+            if (data.sa_battery_power !== undefined) {
+                const p = data.sa_battery_power;
+                document.getElementById('sa-battery-power').innerText = `${Math.abs(p)} W`;
+                const statusEl = document.getElementById('sa-battery-status');
+                if (p > 0) {
+                    statusEl.innerText = 'Charge';
+                    statusEl.style.color = 'var(--primary)';
+                } else if (p < 0) {
+                    statusEl.innerText = 'Décharge';
+                    statusEl.style.color = 'var(--warning)';
+                } else {
+                    statusEl.innerText = 'Repos';
+                    statusEl.style.color = 'var(--text-muted)';
+                }
+            }
 
             // Configuration
             document.getElementById('config-capacity').innerText = `${data.battery_capacity_kwh.toFixed(1)} kWh`;

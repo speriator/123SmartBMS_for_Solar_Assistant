@@ -5,6 +5,8 @@ import json
 import time
 import threading
 import serial
+import urllib.request
+import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 # Global state to store the decoded data and cell values
@@ -34,6 +36,11 @@ latest_data = {
     "v_min_setting": 0.0,
     "v_max_setting": 0.0,
     "v_balance_setting": 0.0,
+    
+    # Solar-Assistant power metrics
+    "sa_pv_power": 0,
+    "sa_load_power": 0,
+    "sa_battery_power": 0,
     
     # Cycled key-value parameters
     "soh": None,
@@ -604,6 +611,38 @@ def daly_emulator_thread():
                 pass
             time.sleep(2)
 
+def influx_reader_thread():
+    print("[InfluxDB Reader] Starting InfluxDB telemetry thread...")
+    while True:
+        try:
+            query = 'SELECT combined FROM "PV power" ORDER BY time DESC LIMIT 1; SELECT combined FROM "Load power" ORDER BY time DESC LIMIT 1; SELECT combined FROM "Battery power" ORDER BY time DESC LIMIT 1'
+            url = 'http://localhost:8086/query?db=solar_assistant&q=' + urllib.parse.quote(query)
+            req = urllib.request.Request(url)
+            with urllib.request.urlopen(req, timeout=2) as response:
+                res_data = json.loads(response.read().decode('utf-8'))
+                results = res_data.get("results", [])
+                
+                pv_power = 0
+                load_power = 0
+                battery_power = 0
+                
+                if len(results) > 0 and "series" in results[0]:
+                    pv_power = int(round(results[0]["series"][0]["values"][0][1]))
+                if len(results) > 1 and "series" in results[1]:
+                    load_power = int(round(results[1]["series"][0]["values"][0][1]))
+                if len(results) > 2 and "series" in results[2]:
+                    battery_power = int(round(results[2]["series"][0]["values"][0][1]))
+                
+                with data_lock:
+                    latest_data["sa_pv_power"] = pv_power
+                    latest_data["sa_load_power"] = load_power
+                    latest_data["sa_battery_power"] = battery_power
+        except Exception as e:
+            # Silence exception to avoid log flooding
+            pass
+            
+        time.sleep(2)
+
 def main():
     # 1. Start UART reading thread
     reader = threading.Thread(target=serial_reader_thread, daemon=True)
@@ -613,7 +652,11 @@ def main():
     emulator = threading.Thread(target=daly_emulator_thread, daemon=True)
     emulator.start()
     
-    # 3. Run HTTP server in main thread
+    # 3. Start InfluxDB reader thread
+    influx_reader = threading.Thread(target=influx_reader_thread, daemon=True)
+    influx_reader.start()
+    
+    # 4. Run HTTP server in main thread
     run_web_server(port=8080)
 
 if __name__ == "__main__":

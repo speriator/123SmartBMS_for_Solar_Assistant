@@ -376,11 +376,26 @@
             color: #4ade80;
         }
 
+        .cell-box.warning {
+            box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
+        }
+        .cell-box.warning .cell-voltage {
+            color: #f59e0b;
+        }
+
         .cell-box.critical {
             box-shadow: 0 0 6px rgba(239, 68, 68, 0.2);
         }
         .cell-box.critical .cell-voltage {
             color: #ff6b6b;
+            animation: text-pulse 0.8s infinite alternate;
+        }
+
+        .cell-box.critical-low {
+            box-shadow: 0 0 6px rgba(185, 28, 28, 0.2);
+        }
+        .cell-box.critical-low .cell-voltage {
+            color: #ef4444;
             animation: text-pulse 0.8s infinite alternate;
         }
 
@@ -919,23 +934,23 @@
                         let barColor = 'var(--primary)';
                         let valColor = '#10b981';
                         
-                        const isCellCritical = (cell.voltage <= vMin || cell.voltage >= vMax || (cell.voltage - packAvg) <= -0.008 || cell.voltage > (vBalance + 0.010));
-                        const isCellBalancing = (!isCellCritical && cell.voltage >= vBalance);
-
-                        if (isCellCritical) {
-                            barColor = 'var(--danger)';
+                        const diff = cell.voltage - vBalance;
+                        
+                        if (diff < -0.010 || cell.voltage <= vMin || cell.voltage <= (packAvg - 0.008)) {
+                            barColor = '#b91c1c';
                             valColor = '#ef4444';
-                        } else if (isCellBalancing) {
+                        } else if (diff >= -0.010 && diff < -0.005) {
+                            barColor = 'var(--primary)';
+                            valColor = '#10b981';
+                        } else if (diff >= -0.005 && diff <= 0.005) {
                             barColor = '#4ade80';
                             valColor = '#4ade80';
+                        } else if (diff > 0.005 && diff <= 0.010) {
+                            barColor = '#f59e0b';
+                            valColor = '#f59e0b';
                         } else {
-                            if (deviationMv > 15) {
-                                barColor = 'var(--warning)';
-                                valColor = '#f59e0b';
-                            } else if (deviationMv < -15) {
-                                barColor = 'var(--secondary)';
-                                valColor = '#06b6d4';
-                            }
+                            barColor = 'var(--danger)';
+                            valColor = '#ff6b6b';
                         }
                         
                         const isLastUpdated = (cell.cell_id === data.last_updated_cell_id);
@@ -1012,22 +1027,35 @@
                         let termColor = 'var(--primary)';
 
                         // Threshold testing
-                        if (cell.voltage <= vMin || cell.voltage >= vMax || cell.voltage <= (packAvg - 0.008) || cell.voltage > (vBalance + 0.010)) {
+                        const diff = cell.voltage - vBalance;
+
+                        if (diff < -0.010 || cell.voltage <= vMin || cell.voltage <= (packAvg - 0.008)) {
+                            containerEl.classList.add('critical-low');
+                            fillColor = 'rgba(185, 28, 28, 0.22)';
+                            statusColor = '#b91c1c';
+                            termColor = '#b91c1c';
+                            anyCritical = true;
+                        } else if (diff >= -0.010 && diff < -0.005) {
+                            containerEl.classList.add('normal');
+                            fillColor = 'rgba(16, 185, 129, 0.14)';
+                            statusColor = 'rgba(16, 185, 129, 0.22)';
+                            termColor = 'var(--primary)';
+                        } else if (diff >= -0.005 && diff <= 0.005) {
+                            containerEl.classList.add('balancing');
+                            fillColor = 'rgba(74, 222, 128, 0.16)';
+                            statusColor = '#4ade80';
+                            termColor = '#4ade80';
+                        } else if (diff > 0.005 && diff <= 0.010) {
+                            containerEl.classList.add('warning');
+                            fillColor = 'rgba(245, 158, 11, 0.16)';
+                            statusColor = '#f59e0b';
+                            termColor = '#f59e0b';
+                        } else {
                             containerEl.classList.add('critical');
                             fillColor = 'rgba(239, 68, 68, 0.22)';
                             statusColor = 'var(--danger)';
                             termColor = 'var(--danger)';
                             anyCritical = true;
-                        } else if (cell.voltage >= vBalance) {
-                            containerEl.classList.add('balancing');
-                            fillColor = 'rgba(74, 222, 128, 0.16)';
-                            statusColor = '#4ade80';
-                            termColor = '#4ade80';
-                        } else {
-                            containerEl.classList.add('normal');
-                            fillColor = 'rgba(16, 185, 129, 0.14)';
-                            statusColor = 'rgba(16, 185, 129, 0.22)';
-                            termColor = 'var(--primary)';
                         }
 
                         // Apply dynamic styles for fill & border

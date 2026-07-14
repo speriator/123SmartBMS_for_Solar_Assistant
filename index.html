@@ -1041,13 +1041,13 @@
                         let termColor = 'var(--primary)';
 
                         // Threshold testing
-                        if (cell.voltage <= vMin || cell.voltage >= vMax) {
+                        if (cell.voltage <= vMin || cell.voltage >= vMax || cell.voltage <= (packAvg - 0.008)) {
                             containerEl.classList.add('critical');
                             fillColor = 'rgba(239, 68, 68, 0.22)';
                             statusColor = 'var(--danger)';
                             termColor = 'var(--danger)';
                             anyCritical = true;
-                        } else if (cell.voltage >= vBalance) {
+                        } else if (cell.voltage >= (vBalance + 0.008)) {
                             containerEl.classList.add('balancing');
                             fillColor = 'rgba(245, 158, 11, 0.16)';
                             statusColor = 'var(--warning)';

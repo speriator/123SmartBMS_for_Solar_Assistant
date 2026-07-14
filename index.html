@@ -389,9 +389,21 @@
             100% { opacity: 1; }
         }
 
+        /* Flash animation for cell update (scanning feedback) */
+        .cell-box.flash-update {
+            animation: cell-flash-anim 3.2s ease-out;
+        }
 
-
-
+        @keyframes cell-flash-anim {
+            0% {
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+                transform: scale(1.03);
+                z-index: 10;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
 
         /* Settings and info bottom cards */
         .bottom-panel {
@@ -926,7 +938,10 @@
                             }
                         }
                         
-                        const flashStyle = `background-color: ${barColor}; width: 24px;`;
+                        const isLastUpdated = (cell.cell_id === data.last_updated_cell_id);
+                        const flashStyle = isLastUpdated 
+                            ? "background-color: #fff; box-shadow: 0 0 6px #fff; width: 28px; z-index: 5;" 
+                            : `background-color: ${barColor}; width: 24px;`;
                         
                         let topText = '&nbsp;';
                         let bottomText = `<div style="color: var(--text-muted); font-size: 0.55rem; margin-top: 1px;">#${cell.cell_id}</div>`;
@@ -1020,6 +1035,13 @@
                         containerEl.style.borderColor = statusColor;
                         termEl.style.backgroundColor = termColor;
                         termEl.style.borderColor = termColor;
+
+                        // Apply flash update class
+                        if (cell.cell_id === data.last_updated_cell_id) {
+                            containerEl.classList.add('flash-update');
+                        } else if (wasFlashing) {
+                            containerEl.classList.remove('flash-update');
+                        }
 
 
                     }

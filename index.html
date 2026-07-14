@@ -487,175 +487,183 @@
         </div>
     </header>
 
-    <div class="dashboard-grid">
-        <!-- Left Column: SoC & Basic Stats -->
-        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-            <div class="card">
-                <span class="card-title">État de Charge</span>
-                <div class="soc-container">
-                    <svg class="soc-svg">
-                        <circle class="soc-track" cx="45" cy="45" r="38"></circle>
-                        <circle id="soc-progress" class="soc-progress" cx="45" cy="45" r="38"></circle>
-                    </svg>
-                    <div class="soc-text-container">
-                        <div>
-                            <span id="soc-value" class="soc-value">0</span>
-                            <span class="soc-unit">%</span>
-                        </div>
-                        <span id="soc-wh" class="soc-wh">0 Wh</span>
+    <!-- 5 Top metrics (circular gauges) -->
+    <div class="metrics-summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 0.6rem;">
+        <!-- Card 1: État de Charge -->
+        <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+            <span class="metric-card-header" style="align-self: flex-start;">État de Charge</span>
+            <div class="soc-container">
+                <svg class="soc-svg">
+                    <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                    <circle id="soc-progress" class="soc-progress" cx="45" cy="45" r="38"></circle>
+                </svg>
+                <div class="soc-text-container">
+                    <div>
+                        <span id="soc-value" class="soc-value">0</span>
+                        <span class="soc-unit">%</span>
                     </div>
+                    <span id="soc-wh" class="soc-wh">0 Wh</span>
                 </div>
             </div>
-
-            <div class="card">
-                <span class="card-title">Résumé de l'Énergie</span>
-                <div class="stats-list">
-                    <div class="stat-item">
-                        <span class="stat-label">Collecté aujourd'hui</span>
-                        <span id="energy-collected-today" class="stat-value">0 Wh</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Consommé aujourd'hui</span>
-                        <span id="energy-consumed-today" class="stat-value">0 Wh</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Total Collecté</span>
-                        <span id="energy-collected-total" class="stat-value">0 kWh</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Total Consommé</span>
-                        <span id="energy-consumed-total" class="stat-value">0 kWh</span>
-                    </div>
-                </div>
+            <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+                <span>Capacité LTO</span>
             </div>
         </div>
 
-        <!-- Right Column: Live Metrics & Cell list -->
-        <div class="details-panel">
-            <!-- 3 Main counters: Voltages, Current, Temperatures -->
-            <div class="metrics-summary-grid">
-                <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
-                    <span class="metric-card-header" style="align-self: flex-start;">Tension de Batterie</span>
-                    <div class="soc-container">
-                        <svg class="soc-svg">
-                            <circle class="soc-track" cx="45" cy="45" r="38"></circle>
-                            <circle id="voltage-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--secondary); transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
-                        </svg>
-                        <div class="soc-text-container">
-                            <span id="voltage-total" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0.00 V</span>
-                            <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Voltage</span>
-                        </div>
-                    </div>
-                    <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
-                        <span>Min: <span id="voltage-min-lbl" class="footer-highlight">0.00 V</span></span>
-                        <span>Max: <span id="voltage-max-lbl" class="footer-highlight">0.00 V</span></span>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <span class="metric-card-header">Courant Total</span>
-                    <span id="current-total" class="metric-card-value">0.00 A</span>
-                    <div class="metric-card-footer">
-                        <span>I1: <span id="current-i1-lbl">0.00 A</span></span>
-                        <span>I2: <span id="current-i2-lbl">0.00 A</span></span>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <span class="metric-card-header">Température Système</span>
-                    <span id="temp-max" class="metric-card-value">0 °C</span>
-                    <div class="metric-card-footer">
-                        <span>Min: <span id="temp-min-lbl" class="footer-highlight">0 °C</span></span>
-                        <span>Max: <span id="temp-max-lbl" class="footer-highlight">0 °C</span></span>
-                    </div>
+        <!-- Card 2: Tension de Batterie -->
+        <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+            <span class="metric-card-header" style="align-self: flex-start;">Tension de Batterie</span>
+            <div class="soc-container">
+                <svg class="soc-svg">
+                    <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                    <circle id="voltage-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--secondary); transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
+                </svg>
+                <div class="soc-text-container">
+                    <span id="voltage-total" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0.00 V</span>
+                    <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Voltage</span>
                 </div>
             </div>
+            <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+                <span>Min: <span id="voltage-min-lbl" class="footer-highlight">0.00 V</span></span>
+                <span>Max: <span id="voltage-max-lbl" class="footer-highlight">0.00 V</span></span>
+            </div>
+        </div>
 
-            <!-- Solar-Assistant Inverter Metrics -->
-            <div class="metrics-summary-grid">
-                <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
-                    <span class="metric-card-header" style="align-self: flex-start;">Production Solaire (PV)</span>
-                    <div class="soc-container">
-                        <svg class="soc-svg">
-                            <circle class="soc-track" cx="45" cy="45" r="38"></circle>
-                            <circle id="pv-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: #facc15; transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
-                        </svg>
-                        <div class="soc-text-container">
-                            <span id="sa-pv-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
-                            <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Solaire</span>
-                        </div>
-                    </div>
-                    <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
-                        <span>Solar-Assistant</span>
-                    </div>
-                </div>
-
-                <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
-                    <span class="metric-card-header" style="align-self: flex-start;">Puissance Charge (Load)</span>
-                    <div class="soc-container">
-                        <svg class="soc-svg">
-                            <circle class="soc-track" cx="45" cy="45" r="38"></circle>
-                            <circle id="load-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--accent); transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
-                        </svg>
-                        <div class="soc-text-container">
-                            <span id="sa-load-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
-                            <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Charge</span>
-                        </div>
-                    </div>
-                    <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
-                        <span>Consommation active</span>
-                    </div>
-                </div>
-
-                <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
-                    <span class="metric-card-header" style="align-self: flex-start;">Flux Batterie (SA)</span>
-                    <div class="soc-container">
-                        <svg class="soc-svg">
-                            <circle class="soc-track" cx="45" cy="45" r="38"></circle>
-                            <circle id="sa-battery-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--text-muted); transition: stroke-dashoffset 0.8s ease-in-out, stroke-dasharray 0.8s ease-in-out, stroke 0.3s ease;"></circle>
-                        </svg>
-                        <div class="soc-text-container">
-                            <span id="sa-battery-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
-                            <span id="sa-battery-status" class="footer-highlight" style="font-size: 0.65rem; font-weight: 600;">Repos</span>
-                        </div>
-                    </div>
-                    <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
-                        <span>Solar-Assistant</span>
-                    </div>
+        <!-- Card 3: Production Solaire (PV) -->
+        <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+            <span class="metric-card-header" style="align-self: flex-start;">Production Solaire (PV)</span>
+            <div class="soc-container">
+                <svg class="soc-svg">
+                    <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                    <circle id="pv-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: #facc15; transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
+                </svg>
+                <div class="soc-text-container">
+                    <span id="sa-pv-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
+                    <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Solaire</span>
                 </div>
             </div>
+            <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+                <span>Solar-Assistant</span>
+            </div>
+        </div>
 
-            <!-- Single-line Cell Deviation Profiler -->
-            <div class="card" style="gap: 0.4rem;">
-                <span class="card-title">Profil de Déviation des Cellules (Écart à la moyenne en mV)</span>
-                <div id="deviation-chart-container" style="display: flex; height: 74px; align-items: stretch; gap: 2px; padding: 6px 8px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
-                    <!-- 22 columns generated here -->
+        <!-- Card 4: Flux Batterie (SA) -->
+        <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+            <span class="metric-card-header" style="align-self: flex-start;">Flux Batterie (SA)</span>
+            <div class="soc-container">
+                <svg class="soc-svg">
+                    <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                    <circle id="sa-battery-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--text-muted); transition: stroke-dashoffset 0.8s ease-in-out, stroke-dasharray 0.8s ease-in-out, stroke 0.3s ease;"></circle>
+                </svg>
+                <div class="soc-text-container">
+                    <span id="sa-battery-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
+                    <span id="sa-battery-status" class="footer-highlight" style="font-size: 0.65rem; font-weight: 600;">Repos</span>
                 </div>
             </div>
+            <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+                <span>Solar-Assistant</span>
+            </div>
+        </div>
 
-            <!-- Cells grid -->
-            <div class="card cells-card">
-                <span class="card-title">Surveillance des Tensions Cellules</span>
-                
-                <!-- Balancing and Deviation Summary Row -->
-                <div class="cells-summary-row">
-                    <div>Delta Pack : <span id="pack-delta" class="summary-item-val">- mV</span></div>
-                    <div>Tension Moyenne : <span id="pack-avg" class="summary-item-val">- V</span></div>
-                    <div>Déviation Haute : <span id="highest-cell-deviation" class="summary-item-val">-</span></div>
-                    <div>Déviation Basse : <span id="lowest-cell-deviation" class="summary-item-val">-</span></div>
+        <!-- Card 5: Puissance Charge (Load) -->
+        <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+            <span class="metric-card-header" style="align-self: flex-start;">Puissance Charge (Load)</span>
+            <div class="soc-container">
+                <svg class="soc-svg">
+                    <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                    <circle id="load-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--accent); transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
+                </svg>
+                <div class="soc-text-container">
+                    <span id="sa-load-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
+                    <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Charge</span>
                 </div>
+            </div>
+            <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+                <span>Consommation active</span>
+            </div>
+        </div>
+    </div>
 
-                <div id="cells-grid" class="cells-grid">
-                    <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 1rem; font-size: 0.75rem;">
-                        Attente du signal UART de la batterie...
-                    </div>
+    <!-- Cells Deviation and Cell Grid (Full width) -->
+    <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.6rem;">
+        <!-- Single-line Cell Deviation Profiler -->
+        <div class="card" style="gap: 0.4rem;">
+            <span class="card-title">Profil de Déviation des Cellules (Écart à la moyenne en mV)</span>
+            <div id="deviation-chart-container" style="display: flex; height: 74px; align-items: stretch; gap: 2px; padding: 6px 8px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--card-border); overflow-x: auto; position: relative;">
+                <!-- 22 columns generated here -->
+            </div>
+        </div>
+
+        <!-- Cells grid -->
+        <div class="card cells-card">
+            <span class="card-title">Surveillance des Tensions Cellules</span>
+            
+            <!-- Balancing and Deviation Summary Row -->
+            <div class="cells-summary-row">
+                <div>Delta Pack : <span id="pack-delta" class="summary-item-val">- mV</span></div>
+                <div>Tension Moyenne : <span id="pack-avg" class="summary-item-val">- V</span></div>
+                <div>Déviation Haute : <span id="highest-cell-deviation" class="summary-item-val">-</span></div>
+                <div>Déviation Basse : <span id="lowest-cell-deviation" class="summary-item-val">-</span></div>
+            </div>
+
+            <div id="cells-grid" class="cells-grid">
+                <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 1rem; font-size: 0.75rem;">
+                    Attente du signal UART de la batterie...
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bottom panel: settings and diagnostics -->
-    <div class="bottom-panel">
+    <!-- Bottom panel: detailed readings, settings, and diagnostics -->
+    <div class="bottom-panel" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <!-- Card 1: Intensité / Courant -->
+        <div class="card">
+            <span class="card-title">Intensité / Courant</span>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; justify-content: center; height: 100%;">
+                <div style="font-size: 1.4rem; font-weight: 800;" id="current-total">0.00 A</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-top: auto;">
+                    <span>I1: <span id="current-i1-lbl">0.00 A</span></span>
+                    <span>I2: <span id="current-i2-lbl">0.00 A</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Température Système -->
+        <div class="card">
+            <span class="card-title">Température Système</span>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; justify-content: center; height: 100%;">
+                <div style="font-size: 1.4rem; font-weight: 800;" id="temp-max">0 °C</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-top: auto;">
+                    <span>Min: <span id="temp-min-lbl" class="footer-highlight">0 °C</span></span>
+                    <span>Max: <span id="temp-max-lbl" class="footer-highlight">0 °C</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Résumé de l'Énergie -->
+        <div class="card">
+            <span class="card-title">Résumé de l'Énergie</span>
+            <div class="stats-list">
+                <div class="stat-item">
+                    <span class="stat-label">Collecté aujourd'hui</span>
+                    <span id="energy-collected-today" class="stat-value">0 Wh</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Consommé aujourd'hui</span>
+                    <span id="energy-consumed-today" class="stat-value">0 Wh</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Collecté</span>
+                    <span id="energy-collected-total" class="stat-value">0 kWh</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Consommé</span>
+                    <span id="energy-consumed-total" class="stat-value">0 kWh</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Paramètres BMS -->
         <div class="card">
             <span class="card-title">Paramètres de Configuration du BMS</span>
             <div class="info-grid">
@@ -678,6 +686,7 @@
             </div>
         </div>
 
+        <!-- Card 5: Diagnostics -->
         <div class="card">
             <span class="card-title">Diagnostics & Cycle (UART)</span>
             <div class="info-grid">

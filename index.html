@@ -580,18 +580,20 @@
                     </div>
                 </div>
 
-                <div class="metric-card">
-                    <span class="metric-card-header">Flux Batterie (SA)</span>
-                    <span id="sa-battery-power" class="metric-card-value">0 W</span>
-                    <!-- Slider Container -->
-                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; position: relative; margin: 4px 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
-                        <!-- Center mark -->
-                        <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.3); z-index: 2;"></div>
-                        <!-- Fill bar -->
-                        <div id="sa-battery-slider-fill" style="position: absolute; top: 0; bottom: 0; width: 0%; transition: all 0.3s ease; z-index: 1;"></div>
+                <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+                    <span class="metric-card-header" style="align-self: flex-start;">Flux Batterie (SA)</span>
+                    <div class="soc-container">
+                        <svg class="soc-svg">
+                            <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                            <circle id="sa-battery-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--text-muted); transition: stroke-dashoffset 0.8s ease-in-out, stroke-dasharray 0.8s ease-in-out, stroke 0.3s ease;"></circle>
+                        </svg>
+                        <div class="soc-text-container">
+                            <span id="sa-battery-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
+                            <span id="sa-battery-status" class="footer-highlight" style="font-size: 0.65rem; font-weight: 600;">Repos</span>
+                        </div>
                     </div>
-                    <div class="metric-card-footer">
-                        <span id="sa-battery-status" class="footer-highlight">Repos</span>
+                    <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+                        <span>Solar-Assistant</span>
                     </div>
                 </div>
             </div>
@@ -766,30 +768,31 @@
                 const p = data.sa_battery_power;
                 document.getElementById('sa-battery-power').innerText = `${Math.abs(p)} W`;
                 const statusEl = document.getElementById('sa-battery-status');
-                const sliderFill = document.getElementById('sa-battery-slider-fill');
+                const progressEl = document.getElementById('sa-battery-progress');
                 
-                const maxPower = 5000; // 5kW max scale for visual representation
+                const r = 38;
+                const C = 2 * Math.PI * r; // ~238.76
+                const maxPower = 5000; // 5kW max scale for circular gauge
                 const absP = Math.min(Math.abs(p), maxPower);
-                const pct = (absP / maxPower) * 50; // max width is 50% from center
+                const L = (absP / maxPower) * (C / 2); // Max arc length is half a circle (C/2)
                 
                 if (p > 0) {
                     statusEl.innerText = 'Charge';
                     statusEl.style.color = 'var(--primary)';
-                    sliderFill.style.left = '50%';
-                    sliderFill.style.right = 'auto';
-                    sliderFill.style.width = `${pct}%`;
-                    sliderFill.style.backgroundColor = 'var(--primary)';
+                    progressEl.style.strokeDasharray = `${L} ${C}`;
+                    progressEl.style.strokeDashoffset = 0;
+                    progressEl.style.stroke = 'var(--primary)';
                 } else if (p < 0) {
                     statusEl.innerText = 'Décharge';
                     statusEl.style.color = 'var(--danger)'; // Red for discharge
-                    sliderFill.style.left = 'auto';
-                    sliderFill.style.right = '50%';
-                    sliderFill.style.width = `${pct}%`;
-                    sliderFill.style.backgroundColor = 'var(--danger)'; // Red
+                    progressEl.style.strokeDasharray = `${L} ${C}`;
+                    progressEl.style.strokeDashoffset = L;
+                    progressEl.style.stroke = 'var(--danger)';
                 } else {
                     statusEl.innerText = 'Repos';
                     statusEl.style.color = 'var(--text-muted)';
-                    sliderFill.style.width = '0%';
+                    progressEl.style.strokeDasharray = `0 ${C}`;
+                    progressEl.style.strokeDashoffset = 0;
                 }
             }
 

@@ -534,10 +534,19 @@
         <div class="details-panel">
             <!-- 3 Main counters: Voltages, Current, Temperatures -->
             <div class="metrics-summary-grid">
-                <div class="metric-card">
-                    <span class="metric-card-header">Tension de Batterie</span>
-                    <span id="voltage-total" class="metric-card-value">0.00 V</span>
-                    <div class="metric-card-footer">
+                <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+                    <span class="metric-card-header" style="align-self: flex-start;">Tension de Batterie</span>
+                    <div class="soc-container">
+                        <svg class="soc-svg">
+                            <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                            <circle id="voltage-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--secondary); transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
+                        </svg>
+                        <div class="soc-text-container">
+                            <span id="voltage-total" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0.00 V</span>
+                            <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Voltage</span>
+                        </div>
+                    </div>
+                    <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
                         <span>Min: <span id="voltage-min-lbl" class="footer-highlight">0.00 V</span></span>
                         <span>Max: <span id="voltage-max-lbl" class="footer-highlight">0.00 V</span></span>
                     </div>
@@ -564,18 +573,36 @@
 
             <!-- Solar-Assistant Inverter Metrics -->
             <div class="metrics-summary-grid">
-                <div class="metric-card">
-                    <span class="metric-card-header">Production Solaire (PV)</span>
-                    <span id="sa-pv-power" class="metric-card-value">0 W</span>
-                    <div class="metric-card-footer">
+                <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+                    <span class="metric-card-header" style="align-self: flex-start;">Production Solaire (PV)</span>
+                    <div class="soc-container">
+                        <svg class="soc-svg">
+                            <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                            <circle id="pv-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: #f59e0b; transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
+                        </svg>
+                        <div class="soc-text-container">
+                            <span id="sa-pv-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
+                            <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Solaire</span>
+                        </div>
+                    </div>
+                    <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
                         <span>Solar-Assistant</span>
                     </div>
                 </div>
 
-                <div class="metric-card">
-                    <span class="metric-card-header">Puissance Charge (Load)</span>
-                    <span id="sa-load-power" class="metric-card-value">0 W</span>
-                    <div class="metric-card-footer">
+                <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+                    <span class="metric-card-header" style="align-self: flex-start;">Puissance Charge (Load)</span>
+                    <div class="soc-container">
+                        <svg class="soc-svg">
+                            <circle class="soc-track" cx="45" cy="45" r="38"></circle>
+                            <circle id="load-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--accent); transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
+                        </svg>
+                        <div class="soc-text-container">
+                            <span id="sa-load-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
+                            <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Charge</span>
+                        </div>
+                    </div>
+                    <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
                         <span>Consommation active</span>
                     </div>
                 </div>
@@ -689,6 +716,14 @@
         socProgress.style.strokeDasharray = `${circumference} ${circumference}`;
         setSoC(0);
 
+        // Initialize other circular gauges
+        document.getElementById('voltage-progress').style.strokeDasharray = `${circumference} ${circumference}`;
+        document.getElementById('voltage-progress').style.strokeDashoffset = circumference;
+        document.getElementById('pv-progress').style.strokeDasharray = `${circumference} ${circumference}`;
+        document.getElementById('pv-progress').style.strokeDashoffset = circumference;
+        document.getElementById('load-progress').style.strokeDasharray = `${circumference} ${circumference}`;
+        document.getElementById('load-progress').style.strokeDashoffset = circumference;
+
         function setSoC(percent) {
             const offset = circumference - (percent / 100) * circumference;
             socProgress.style.strokeDashoffset = offset;
@@ -757,12 +792,26 @@
             document.getElementById('temp-min-lbl').innerText = `${data.t_lowest} °C (#${data.cell_t_lowest})`;
             document.getElementById('temp-max-lbl').innerText = `${data.t_highest} °C (#${data.cell_t_highest})`;
 
+            // Voltage progress circle
+            const maxVoltage = 60.0;
+            const vPct = Math.min((data.total_voltage / maxVoltage) * 100, 100);
+            const vOffset = circumference - (vPct / 100) * circumference;
+            document.getElementById('voltage-progress').style.strokeDashoffset = vOffset;
+
             // Solar-Assistant Metrics
             if (data.sa_pv_power !== undefined) {
                 document.getElementById('sa-pv-power').innerText = `${data.sa_pv_power} W`;
+                const maxPV = 5000;
+                const pvPct = Math.min((data.sa_pv_power / maxPV) * 100, 100);
+                const pvOffset = circumference - (pvPct / 100) * circumference;
+                document.getElementById('pv-progress').style.strokeDashoffset = pvOffset;
             }
             if (data.sa_load_power !== undefined) {
                 document.getElementById('sa-load-power').innerText = `${data.sa_load_power} W`;
+                const maxLoad = 5000;
+                const loadPct = Math.min((data.sa_load_power / maxLoad) * 100, 100);
+                const loadOffset = circumference - (loadPct / 100) * circumference;
+                document.getElementById('load-progress').style.strokeDashoffset = loadOffset;
             }
             if (data.sa_battery_power !== undefined) {
                 const p = data.sa_battery_power;

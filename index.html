@@ -583,6 +583,13 @@
                 <div class="metric-card">
                     <span class="metric-card-header">Flux Batterie (SA)</span>
                     <span id="sa-battery-power" class="metric-card-value">0 W</span>
+                    <!-- Slider Container -->
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; position: relative; margin: 4px 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+                        <!-- Center mark -->
+                        <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.3); z-index: 2;"></div>
+                        <!-- Fill bar -->
+                        <div id="sa-battery-slider-fill" style="position: absolute; top: 0; bottom: 0; width: 0%; transition: all 0.3s ease; z-index: 1;"></div>
+                    </div>
                     <div class="metric-card-footer">
                         <span id="sa-battery-status" class="footer-highlight">Repos</span>
                     </div>
@@ -759,15 +766,30 @@
                 const p = data.sa_battery_power;
                 document.getElementById('sa-battery-power').innerText = `${Math.abs(p)} W`;
                 const statusEl = document.getElementById('sa-battery-status');
+                const sliderFill = document.getElementById('sa-battery-slider-fill');
+                
+                const maxPower = 5000; // 5kW max scale for visual representation
+                const absP = Math.min(Math.abs(p), maxPower);
+                const pct = (absP / maxPower) * 50; // max width is 50% from center
+                
                 if (p > 0) {
                     statusEl.innerText = 'Charge';
                     statusEl.style.color = 'var(--primary)';
+                    sliderFill.style.left = '50%';
+                    sliderFill.style.right = 'auto';
+                    sliderFill.style.width = `${pct}%`;
+                    sliderFill.style.backgroundColor = 'var(--primary)';
                 } else if (p < 0) {
                     statusEl.innerText = 'Décharge';
-                    statusEl.style.color = 'var(--warning)';
+                    statusEl.style.color = 'var(--danger)'; // Red for discharge
+                    sliderFill.style.left = 'auto';
+                    sliderFill.style.right = '50%';
+                    sliderFill.style.width = `${pct}%`;
+                    sliderFill.style.backgroundColor = 'var(--danger)'; // Red
                 } else {
                     statusEl.innerText = 'Repos';
                     statusEl.style.color = 'var(--text-muted)';
+                    sliderFill.style.width = '0%';
                 }
             }
 

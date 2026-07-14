@@ -392,10 +392,10 @@
         }
 
         .cell-box.critical-low {
-            box-shadow: 0 0 6px rgba(185, 28, 28, 0.2);
+            box-shadow: 0 0 6px rgba(127, 29, 29, 0.3);
         }
         .cell-box.critical-low .cell-voltage {
-            color: #ef4444;
+            color: #b91c1c;
             animation: text-pulse 0.8s infinite alternate;
         }
 
@@ -937,8 +937,8 @@
                         const diff = cell.voltage - vBalance;
                         
                         if (diff < -0.010 || cell.voltage <= vMin || cell.voltage <= (packAvg - 0.008)) {
-                            barColor = '#b91c1c';
-                            valColor = '#ef4444';
+                            barColor = '#7f1d1d';
+                            valColor = '#b91c1c';
                         } else if (diff >= -0.010 && diff < -0.005) {
                             barColor = 'var(--primary)';
                             valColor = '#10b981';
@@ -1031,9 +1031,9 @@
 
                         if (diff < -0.010 || cell.voltage <= vMin || cell.voltage <= (packAvg - 0.008)) {
                             containerEl.classList.add('critical-low');
-                            fillColor = 'rgba(185, 28, 28, 0.22)';
-                            statusColor = '#b91c1c';
-                            termColor = '#b91c1c';
+                            fillColor = 'rgba(127, 29, 29, 0.25)';
+                            statusColor = '#7f1d1d';
+                            termColor = '#7f1d1d';
                             anyCritical = true;
                         } else if (diff >= -0.010 && diff < -0.005) {
                             containerEl.classList.add('normal');

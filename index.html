@@ -941,7 +941,7 @@
                         let valColor = '#ffffff';
                         
                         const diff = cell.voltage - vBalance;
-                        const isCellCritical = (cell.voltage <= vMin || cell.voltage >= vMax || (cell.voltage - packAvg) <= -0.008 || diff > 0.015);
+                        const isCellCritical = (cell.voltage <= vMin || cell.voltage >= vMax || (cell.voltage - packAvg) <= -0.015 || diff > 0.015);
 
                         if (isCellCritical) {
                             barColor = 'var(--danger)';
@@ -1035,7 +1035,7 @@
 
                         // Threshold testing
                         const diff = cell.voltage - vBalance;
-                        const isCritical = (cell.voltage <= vMin || cell.voltage >= vMax || cell.voltage <= (packAvg - 0.008) || diff > 0.015);
+                        const isCritical = (cell.voltage <= vMin || cell.voltage >= vMax || cell.voltage <= (packAvg - 0.015) || diff > 0.015);
 
                         if (isCritical) {
                             containerEl.classList.add('critical');

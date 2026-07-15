@@ -521,10 +521,10 @@
 
     <!-- 5 Top metrics (circular gauges) -->
     <div class="metrics-summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 0.6rem;">
-        <!-- Card 1: État de Charge -->
-        <div class="metric-card" style="align-items: center; justify-content: flex-start; position: relative;">
+        <!-- Card 1: État de Charge & Tension -->
+        <div class="metric-card" style="align-items: center; justify-content: flex-start; position: relative; min-height: 190px; padding: 0.5rem 0.6rem;">
             <span class="metric-card-header" style="align-self: flex-start;">État de Charge</span>
-            <div class="soc-container">
+            <div class="soc-container" style="margin-top: 0.4rem;">
                 <svg class="soc-svg">
                     <circle class="soc-track" cx="45" cy="45" r="38"></circle>
                     <circle id="soc-progress" class="soc-progress" cx="45" cy="45" r="38"></circle>
@@ -534,25 +534,7 @@
                         <span id="soc-value" class="soc-value">0</span>
                         <span class="soc-unit">%</span>
                     </div>
-                    <span id="soc-wh" class="soc-wh">0 Wh</span>
-                </div>
-            </div>
-            <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
-                <span>Capacité LTO</span>
-            </div>
-        </div>
-
-        <!-- Card 2: Tension de Batterie -->
-        <div class="metric-card" style="align-items: center; justify-content: flex-start; position: relative;">
-            <span class="metric-card-header" style="align-self: flex-start;">Tension de Batterie</span>
-            <div class="soc-container">
-                <svg class="soc-svg">
-                    <circle class="soc-track" cx="45" cy="45" r="38"></circle>
-                    <circle id="voltage-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--secondary); transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
-                </svg>
-                <div class="soc-text-container">
-                    <span id="voltage-total" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0.00 V</span>
-                    <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Voltage</span>
+                    <span id="voltage-total" style="font-size: 0.75rem; color: var(--text-light); font-weight: 600; margin-top: 0.05rem;">0.00 V</span>
                 </div>
             </div>
             <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
@@ -810,7 +792,6 @@
         const statusIndicator = document.getElementById('status-indicator');
         const statusText = document.getElementById('status-text');
         const socValue = document.getElementById('soc-value');
-        const socWh = document.getElementById('soc-wh');
         const socProgress = document.getElementById('soc-progress');
         const cellsGrid = document.getElementById('cells-grid');
 
@@ -822,8 +803,6 @@
         setSoC(0);
 
         // Initialize other circular gauges
-        document.getElementById('voltage-progress').style.strokeDasharray = `${circumference} ${circumference}`;
-        document.getElementById('voltage-progress').style.strokeDashoffset = circumference;
         document.getElementById('pv-progress').style.strokeDasharray = `${circumference} ${circumference}`;
         document.getElementById('pv-progress').style.strokeDashoffset = circumference;
         document.getElementById('load-progress').style.strokeDasharray = `${circumference} ${circumference}`;
@@ -879,7 +858,6 @@
 
             // SoC and basic stats
             setSoC(data.soc_pct);
-            socWh.innerText = `${data.energy_stored_wh} Wh`;
             
             document.getElementById('energy-collected-today').innerText = `${data.today_energy_collected_wh} Wh`;
             document.getElementById('energy-consumed-today').innerText = `${data.today_energy_consumed_wh} Wh`;
@@ -899,11 +877,7 @@
             document.getElementById('temp-min-lbl').innerText = `${data.t_lowest} °C (#${data.cell_t_lowest})`;
             document.getElementById('temp-max-lbl').innerText = `${data.t_highest} °C (#${data.cell_t_highest})`;
 
-            // Voltage progress circle
-            const maxVoltage = 60.0;
-            const vPct = Math.min((data.total_voltage / maxVoltage) * 100, 100);
-            const vOffset = circumference - (vPct / 100) * circumference;
-            document.getElementById('voltage-progress').style.strokeDashoffset = vOffset;
+
 
             // Solar-Assistant Metrics
             if (data.sa_pv_power !== undefined) {

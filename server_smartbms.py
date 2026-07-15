@@ -40,6 +40,9 @@ latest_data = {
     # Solar-Assistant power metrics
     "sa_pv_power": 0,
     "sa_load_power": 0,
+    "sa_load_inv_0": 0,
+    "sa_load_inv_1": 0,
+    "sa_load_inv_2": 0,
     "sa_battery_power": 0,
     
     # Cycled key-value parameters
@@ -615,7 +618,7 @@ def influx_reader_thread():
     print("[InfluxDB Reader] Starting InfluxDB telemetry thread...")
     while True:
         try:
-            query = 'SELECT combined FROM "PV power" ORDER BY time DESC LIMIT 1; SELECT combined FROM "Load power" ORDER BY time DESC LIMIT 1; SELECT combined FROM "Battery power" ORDER BY time DESC LIMIT 1'
+            query = 'SELECT combined FROM "PV power" ORDER BY time DESC LIMIT 1; SELECT combined, inverter_0, inverter_1, inverter_2 FROM "Load power" ORDER BY time DESC LIMIT 1; SELECT combined FROM "Battery power" ORDER BY time DESC LIMIT 1'
             url = 'http://localhost:8086/query?db=solar_assistant&q=' + urllib.parse.quote(query)
             req = urllib.request.Request(url)
             with urllib.request.urlopen(req, timeout=2) as response:
@@ -624,18 +627,31 @@ def influx_reader_thread():
                 
                 pv_power = 0
                 load_power = 0
+                load_inv_0 = 0
+                load_inv_1 = 0
+                load_inv_2 = 0
                 battery_power = 0
                 
                 if len(results) > 0 and "series" in results[0]:
                     pv_power = int(round(results[0]["series"][0]["values"][0][1]))
                 if len(results) > 1 and "series" in results[1]:
-                    load_power = int(round(results[1]["series"][0]["values"][0][1]))
+                    series = results[1]["series"][0]
+                    cols = series.get("columns", [])
+                    vals = series.get("values", [[]])[0]
+                    col_map = {c: v for c, v in zip(cols, vals) if v is not None}
+                    load_power = int(round(col_map.get("combined", 0)))
+                    load_inv_0 = int(round(col_map.get("inverter_0", 0)))
+                    load_inv_1 = int(round(col_map.get("inverter_1", 0)))
+                    load_inv_2 = int(round(col_map.get("inverter_2", 0)))
                 if len(results) > 2 and "series" in results[2]:
                     battery_power = int(round(results[2]["series"][0]["values"][0][1]))
                 
                 with data_lock:
                     latest_data["sa_pv_power"] = pv_power
                     latest_data["sa_load_power"] = load_power
+                    latest_data["sa_load_inv_0"] = load_inv_0
+                    latest_data["sa_load_inv_1"] = load_inv_1
+                    latest_data["sa_load_inv_2"] = load_inv_2
                     latest_data["sa_battery_power"] = battery_power
         except Exception as e:
             # Silence exception to avoid log flooding

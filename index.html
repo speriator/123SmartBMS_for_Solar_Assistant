@@ -164,6 +164,38 @@
             justify-content: center;
         }
 
+        .inverter-bar-row {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 2px;
+        }
+        .inverter-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.62rem;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        .inverter-bar-track {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .inverter-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width 0.8s ease-in-out;
+            box-shadow: 0 0 4px var(--accent);
+        }
+        .inverter-bar-fill.total {
+            background: #06b6d4;
+            box-shadow: 0 0 6px #06b6d4;
+        }
+
         .soc-value {
             font-size: 1.4rem;
             font-weight: 800;
@@ -555,19 +587,51 @@
         </div>
 
         <!-- Card 5: Puissance Charge (Load) -->
-        <div class="metric-card" style="align-items: center; justify-content: center; position: relative;">
+        <div class="metric-card" style="align-items: center; justify-content: space-between; position: relative; min-height: 140px; padding: 0.5rem 0.6rem;">
             <span class="metric-card-header" style="align-self: flex-start;">Puissance Charge (Load)</span>
-            <div class="soc-container">
-                <svg class="soc-svg">
-                    <circle class="soc-track" cx="45" cy="45" r="38"></circle>
-                    <circle id="load-progress" class="soc-progress" cx="45" cy="45" r="38" style="stroke: var(--accent); transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
-                </svg>
-                <div class="soc-text-container">
-                    <span id="sa-load-power" class="metric-card-value" style="font-size: 1.1rem; margin-top: 0.1rem;">0 W</span>
-                    <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Charge</span>
+            <div style="display: flex; flex-direction: column; width: 100%; gap: 0.25rem; margin: 0.25rem 0;">
+                <!-- Total Load -->
+                <div class="inverter-bar-row">
+                    <div class="inverter-bar-label">
+                        <span>Total (15kW max)</span>
+                        <span id="load-inv-total-val" style="font-weight: 600; color: #fff;">0 W</span>
+                    </div>
+                    <div class="inverter-bar-track">
+                        <div id="load-inv-total-fill" class="inverter-bar-fill total" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <!-- Inv 1 -->
+                <div class="inverter-bar-row">
+                    <div class="inverter-bar-label">
+                        <span>Inv 1 (5kW max)</span>
+                        <span id="load-inv-0-val" style="color: var(--text-muted);">0 W</span>
+                    </div>
+                    <div class="inverter-bar-track">
+                        <div id="load-inv-0-fill" class="inverter-bar-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <!-- Inv 2 -->
+                <div class="inverter-bar-row">
+                    <div class="inverter-bar-label">
+                        <span>Inv 2 (5kW max)</span>
+                        <span id="load-inv-1-val" style="color: var(--text-muted);">0 W</span>
+                    </div>
+                    <div class="inverter-bar-track">
+                        <div id="load-inv-1-fill" class="inverter-bar-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <!-- Inv 3 -->
+                <div class="inverter-bar-row">
+                    <div class="inverter-bar-label">
+                        <span>Inv 3 (5kW max)</span>
+                        <span id="load-inv-2-val" style="color: var(--text-muted);">0 W</span>
+                    </div>
+                    <div class="inverter-bar-track">
+                        <div id="load-inv-2-fill" class="inverter-bar-fill" style="width: 0%;"></div>
+                    </div>
                 </div>
             </div>
-            <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem;">
+            <div class="metric-card-footer" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.1rem;">
                 <span>Consommation active</span>
             </div>
         </div>
@@ -719,8 +783,7 @@
         document.getElementById('voltage-progress').style.strokeDashoffset = circumference;
         document.getElementById('pv-progress').style.strokeDasharray = `${circumference} ${circumference}`;
         document.getElementById('pv-progress').style.strokeDashoffset = circumference;
-        document.getElementById('load-progress').style.strokeDasharray = `${circumference} ${circumference}`;
-        document.getElementById('load-progress').style.strokeDashoffset = circumference;
+
 
         function setSoC(percent) {
             const offset = circumference - (percent / 100) * circumference;
@@ -805,11 +868,29 @@
                 document.getElementById('pv-progress').style.strokeDashoffset = pvOffset;
             }
             if (data.sa_load_power !== undefined) {
-                document.getElementById('sa-load-power').innerText = `${data.sa_load_power} W`;
-                const maxLoad = 5000;
-                const loadPct = Math.min((data.sa_load_power / maxLoad) * 100, 100);
-                const loadOffset = circumference - (loadPct / 100) * circumference;
-                document.getElementById('load-progress').style.strokeDashoffset = loadOffset;
+                // Total
+                const totalLoad = data.sa_load_power;
+                document.getElementById('load-inv-total-val').innerText = `${totalLoad} W`;
+                const totalPct = Math.min((totalLoad / 15000) * 100, 100);
+                document.getElementById('load-inv-total-fill').style.width = `${totalPct}%`;
+                
+                // Inverter 1
+                const inv0 = data.sa_load_inv_0 || 0;
+                document.getElementById('load-inv-0-val').innerText = `${inv0} W`;
+                const inv0Pct = Math.min((inv0 / 5000) * 100, 100);
+                document.getElementById('load-inv-0-fill').style.width = `${inv0Pct}%`;
+
+                // Inverter 2
+                const inv1 = data.sa_load_inv_1 || 0;
+                document.getElementById('load-inv-1-val').innerText = `${inv1} W`;
+                const inv1Pct = Math.min((inv1 / 5000) * 100, 100);
+                document.getElementById('load-inv-1-fill').style.width = `${inv1Pct}%`;
+
+                // Inverter 3
+                const inv2 = data.sa_load_inv_2 || 0;
+                document.getElementById('load-inv-2-val').innerText = `${inv2} W`;
+                const inv2Pct = Math.min((inv2 / 5000) * 100, 100);
+                document.getElementById('load-inv-2-fill').style.width = `${inv2Pct}%`;
             }
             if (data.sa_battery_power !== undefined) {
                 const p = data.sa_battery_power;

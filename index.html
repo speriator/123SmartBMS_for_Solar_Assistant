@@ -826,15 +826,15 @@
                 if (p > 0) {
                     statusEl.innerText = 'Charge';
                     statusEl.style.color = 'var(--primary)';
-                    progressEl.style.strokeDasharray = `${L} ${C}`;
+                    progressEl.style.strokeDasharray = `${L} ${C - L}`;
                     progressEl.style.strokeDashoffset = 0;
                     progressEl.style.stroke = 'var(--primary)';
                     progressEl.style.filter = 'drop-shadow(0 0 3px var(--primary))';
                 } else if (p < 0) {
                     statusEl.innerText = 'Décharge';
                     statusEl.style.color = 'var(--danger)'; // Red for discharge
-                    progressEl.style.strokeDasharray = `${L} ${C}`;
-                    progressEl.style.strokeDashoffset = C - L;
+                    progressEl.style.strokeDasharray = `${L} ${C - L}`;
+                    progressEl.style.strokeDashoffset = L;
                     progressEl.style.stroke = 'var(--danger)';
                     progressEl.style.filter = 'drop-shadow(0 0 3px var(--danger))';
                 } else {

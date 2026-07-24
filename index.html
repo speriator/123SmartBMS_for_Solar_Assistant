@@ -1213,24 +1213,24 @@
                         let barColor = 'rgba(255, 255, 255, 0.4)';
                         let valColor = '#ffffff';
                         
-                        const diff = cell.voltage - vBalance;
-                        const isCellCritical = (cell.voltage <= vMin || cell.voltage >= vMax || (cell.voltage - packAvg) <= -0.015 || diff > 0.015);
+                        const isCellCritical = (cell.voltage < vMin || cell.voltage > vMax);
 
                         if (isCellCritical) {
                             barColor = 'var(--danger)';
-                            valColor = '#ff6b6b';
-                        } else if (diff >= 0.010 && diff <= 0.015) {
+                        } else if (deviationMv > 50) {
                             barColor = '#f59e0b';
-                            valColor = '#f59e0b';
-                        } else if (diff >= 0 && diff < 0.010) {
-                            barColor = '#4ade80';
-                            valColor = '#4ade80';
-                        } else if (diff >= -0.010 && diff < 0) {
-                            barColor = '#10b981';
-                            valColor = '#10b981';
+                        } else if (deviationMv < -50) {
+                            barColor = '#ff6b6b';
                         } else {
-                            barColor = 'rgba(255, 255, 255, 0.4)';
-                            valColor = '#ffffff';
+                            barColor = 'rgba(16, 185, 129, 0.6)';
+                        }
+
+                        if (deviationMv > 50) {
+                            valColor = '#f59e0b';
+                        } else if (deviationMv < -50) {
+                            valColor = '#ff6b6b';
+                        } else {
+                            valColor = '#10b981';
                         }
                         
                         const isLastUpdated = (cell.cell_id === data.last_updated_cell_id);
@@ -1281,19 +1281,25 @@
                         vEl.innerText = `${cell.voltage.toFixed(3)} V`;
                         tEl.innerText = `${cell.temp} °C`;
 
-                        // Calculate cell deviation in mV
+                        // Calculate cell deviation in mV and set text color
                         const deviationMv = (cell.voltage - packAvg) * 1000;
+                        let textStatusColor = '#10b981'; // Vert par défaut (-50mV <= delta <= +50mV)
+                        if (deviationMv > 50) {
+                            textStatusColor = '#f59e0b'; // Orange pour +50mV
+                        } else if (deviationMv < -50) {
+                            textStatusColor = '#ff6b6b'; // Rouge pour -50mV
+                        }
+
                         if (deviationMv >= 0) {
                             devEl.innerText = `+${deviationMv.toFixed(0)} mV`;
-                            devEl.style.color = deviationMv > 15 ? '#ff9e3b' : '#10b981';
                         } else {
                             devEl.innerText = `${deviationMv.toFixed(0)} mV`;
-                            devEl.style.color = deviationMv < -15 ? '#06b6d4' : '#10b981';
                         }
+                        devEl.style.color = textStatusColor;
+                        vEl.style.color = textStatusColor;
 
                         const vMin = data.v_min_setting || 2.0;
                         const vMax = data.v_max_setting || 2.8;
-                        const vBalance = data.v_balance_setting || 2.50;
 
                         // Fill percentage calculation based on Yinlong LTO discharge curve
                         const pct = calculateLTOSoC(cell.voltage);
@@ -1303,12 +1309,11 @@
                         containerEl.className = 'cell-box';
 
                         let fillColor = 'rgba(16, 185, 129, 0.14)'; // default green
-                        let statusColor = 'rgba(16, 185, 129, 0.22)';
-                        let termColor = 'var(--primary)';
+                        let statusColor = 'rgba(16, 185, 129, 0.35)';
+                        let termColor = '#10b981';
 
-                        // Threshold testing
-                        const diff = cell.voltage - vBalance;
-                        const isCritical = (cell.voltage <= vMin || cell.voltage >= vMax || cell.voltage <= (packAvg - 0.015) || diff > 0.015);
+                        // Threshold testing: Cell box is Red if outside [vmin, vmax], Green otherwise
+                        const isCritical = (cell.voltage < vMin || cell.voltage > vMax);
 
                         if (isCritical) {
                             containerEl.classList.add('critical');
@@ -1316,26 +1321,11 @@
                             statusColor = 'var(--danger)';
                             termColor = 'var(--danger)';
                             anyCritical = true;
-                        } else if (diff >= 0.010 && diff <= 0.015) {
-                            containerEl.classList.add('warning');
-                            fillColor = 'rgba(245, 158, 11, 0.16)';
-                            statusColor = '#f59e0b';
-                            termColor = '#f59e0b';
-                        } else if (diff >= 0 && diff < 0.010) {
-                            containerEl.classList.add('balancing');
-                            fillColor = 'rgba(74, 222, 128, 0.16)';
-                            statusColor = '#4ade80';
-                            termColor = '#4ade80';
-                        } else if (diff >= -0.010 && diff < 0) {
-                            containerEl.classList.add('balancing-low');
-                            fillColor = 'rgba(16, 185, 129, 0.12)';
-                            statusColor = 'rgba(16, 185, 129, 0.25)';
-                            termColor = '#10b981';
                         } else {
                             containerEl.classList.add('normal');
-                            fillColor = 'rgba(255, 255, 255, 0.06)';
-                            statusColor = 'rgba(255, 255, 255, 0.15)';
-                            termColor = 'rgba(255, 255, 255, 0.3)';
+                            fillColor = 'rgba(16, 185, 129, 0.14)';
+                            statusColor = 'rgba(16, 185, 129, 0.35)';
+                            termColor = '#10b981';
                         }
 
                         // Apply dynamic styles for fill & border

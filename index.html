@@ -521,7 +521,64 @@
 
     <!-- 5 Top metrics (circular gauges) -->
     <div class="metrics-summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 0.6rem;">
-        <!-- Card 1: État de Charge & Tension -->
+        <!-- Card 1: Synthèse Système (Concentrique) -->
+        <div class="metric-card" style="align-items: center; justify-content: flex-start; position: relative; min-height: 190px; padding: 0.5rem 0.6rem;">
+            <span class="metric-card-header" style="align-self: flex-start;">Synthèse Système</span>
+            <div class="soc-container" style="margin-top: 0.4rem; height: 110px; width: 100%; position: relative; display: flex; align-items: center; justify-content: center;">
+                <!-- Bottom-Left Corner: Battery Net -->
+                <div style="position: absolute; bottom: 0; left: 0; display: flex; flex-direction: column; align-items: flex-start; font-size: 0.58rem; line-height: 1.1;">
+                    <span style="color: var(--primary); font-weight: 600; text-transform: uppercase;" id="ring-corner-battery-lbl">Batt</span>
+                    <span id="ring-corner-battery" style="font-weight: 700; color: var(--primary);">0 W</span>
+                    <span id="ring-corner-current" style="font-weight: 700; color: var(--primary);">0.00 A</span>
+                </div>
+
+                <!-- Bottom-Right Corner: Cell Min/Max -->
+                <div style="position: absolute; bottom: 0; right: 0; display: flex; flex-direction: column; align-items: flex-end; font-size: 0.58rem; line-height: 1.1;">
+                    <span style="color: var(--secondary); font-weight: 600; text-transform: uppercase;">Cellules</span>
+                    <span id="ring-corner-vmin" style="font-weight: 700; color: #fff;">Min: -</span>
+                    <span id="ring-corner-vmax" style="font-weight: 700; color: #fff;">Max: -</span>
+                </div>
+
+                <!-- Top-Left Corner: Load -->
+                <div style="position: absolute; top: 0; left: 0; display: flex; flex-direction: column; align-items: flex-start; font-size: 0.6rem; line-height: 1.1;">
+                    <span style="color: var(--accent); font-weight: 600; text-transform: uppercase;">Load</span>
+                    <span id="ring-corner-load" style="font-weight: 700; color: #fff; font-size: 0.75rem;">0 W</span>
+                </div>
+                
+                <!-- Top-Right Corner: Solar -->
+                <div style="position: absolute; top: 0; right: 0; display: flex; flex-direction: column; align-items: flex-end; font-size: 0.6rem; line-height: 1.1;">
+                    <span style="color: #facc15; font-weight: 600; text-transform: uppercase;" id="ring-corner-solar-lbl">Solar</span>
+                    <span id="ring-corner-solar" style="font-weight: 700; color: #facc15; font-size: 0.75rem;">0 W</span>
+                </div>
+
+                <svg class="soc-svg" viewBox="0 0 100 100" style="transform: rotate(-90deg); overflow: visible; width: 90px; height: 90px;">
+                    <!-- Outer Ring: Solar (Yellow) -->
+                    <circle class="soc-track" cx="50" cy="50" r="43" style="stroke: rgba(250, 204, 21, 0.05); stroke-width: 5; fill: none;"></circle>
+                    <circle id="ring-solar" cx="50" cy="50" r="43" style="fill: none; stroke: #facc15; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 270.18; stroke-dashoffset: 270.18; transition: stroke-dashoffset 0.8s ease-in-out;"></circle>
+                    
+                    <!-- Middle Ring: Battery (Green/Red) -->
+                    <circle class="soc-track" cx="50" cy="50" r="34" style="stroke: rgba(255, 255, 255, 0.05); stroke-width: 5; fill: none;"></circle>
+                    <circle id="ring-battery" cx="50" cy="50" r="34" style="fill: none; stroke: var(--primary); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 213.63; stroke-dashoffset: 213.63; transition: stroke-dashoffset 0.8s ease-in-out, stroke 0.3s ease;"></circle>
+                    
+                    <!-- Inner Ring: Load (Purple) -->
+                    <circle class="soc-track" cx="50" cy="50" r="25" style="stroke: rgba(168, 85, 247, 0.05); stroke-width: 5; fill: none;"></circle>
+                    <circle id="ring-load" cx="50" cy="50" r="25" style="fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 157.08; stroke-dashoffset: 157.08; transition: stroke-dashoffset 0.8s ease-in-out; transform: scaleY(-1); transform-origin: 50px 50px;"></circle>
+                </svg>
+                
+                <!-- Text centered in the Concentric Ring -->
+                <div class="soc-text-container" style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                    <div>
+                        <span id="ring-soc-val" style="font-size: 1.15rem; font-weight: 800; color: #fff; line-height: 1;">0</span>
+                        <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">%</span>
+                    </div>
+                    <span id="ring-voltage-val" style="font-size: 0.58rem; color: var(--text-light); font-weight: 600; margin-top: 0.02rem;">0.00 V</span>
+                </div>
+            </div>
+            <div class="metric-card-footer" style="width: 100%; font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">
+            </div>
+        </div>
+
+        <!-- Card 2: État de Charge & Tension -->
         <div class="metric-card" style="align-items: center; justify-content: flex-start; position: relative; min-height: 190px; padding: 0.5rem 0.6rem;">
             <span class="metric-card-header" style="align-self: flex-start;">État de Charge</span>
             <div class="soc-container" style="margin-top: 0.4rem;">
@@ -592,6 +649,8 @@
                 <span>Solar-Assistant</span>
             </div>
         </div>
+
+
 
         <!-- Card 4: Flux Batterie (SA) -->
         <div class="metric-card" style="align-items: center; justify-content: flex-start; position: relative;">
@@ -865,7 +924,9 @@
             document.getElementById('energy-consumed-total').innerText = `${data.total_consumed_kwh} kWh`;
 
             document.getElementById('voltage-total').innerText = `${data.total_voltage.toFixed(2)} V`;
-            document.getElementById('current-total').innerText = `${data.current_total.toFixed(2)} A`;
+            const calculatedCurrent = data.total_voltage > 0 ? (data.sa_battery_power / data.total_voltage) : 0.0;
+            const currentTotalPrefix = calculatedCurrent > 0 ? "+" : "";
+            document.getElementById('current-total').innerText = `${currentTotalPrefix}${calculatedCurrent.toFixed(2)} A`;
             
             document.getElementById('current-i1-lbl').innerText = `${data.current_i1.toFixed(2)} A`;
             document.getElementById('current-i2-lbl').innerText = `${data.current_i2.toFixed(2)} A`;
@@ -967,6 +1028,92 @@
                     progressEl.style.strokeDashoffset = 0;
                     progressEl.style.filter = 'none';
                 }
+            }
+
+            // Concentric Rings Update
+            if (data.soc_pct !== undefined) {
+                document.getElementById('ring-soc-val').innerText = data.soc_pct;
+            }
+            if (data.total_voltage !== undefined) {
+                document.getElementById('ring-voltage-val').innerText = `${data.total_voltage.toFixed(2)} V`;
+            }
+            if (data.sa_pv_power !== undefined) {
+                const pv = data.sa_pv_power;
+                document.getElementById('ring-corner-solar').innerText = `${pv} W`;
+                const pvPct = Math.min((pv / 15000) * 100, 100);
+                const pvOffset = 270.18 - (pvPct / 100) * 270.18;
+                document.getElementById('ring-solar').style.strokeDashoffset = pvOffset;
+            }
+            if (data.sa_battery_power !== undefined && data.total_voltage !== undefined) {
+                const batt = data.sa_battery_power;
+                const absBatt = Math.abs(batt);
+                
+                const curr = data.total_voltage > 0 ? (batt / data.total_voltage) : 0.0;
+                const absCurr = Math.abs(curr);
+                
+                // Prefix + for charge, - for discharge
+                const powerPrefix = batt > 0 ? "+" : (batt < 0 ? "-" : "");
+                const currentPrefix = curr > 0 ? "+" : (curr < 0 ? "-" : "");
+                
+                document.getElementById('ring-corner-battery').innerText = `${powerPrefix}${absBatt} W`;
+                document.getElementById('ring-corner-current').innerText = `${currentPrefix}${absCurr.toFixed(2)} A`;
+                
+                const ringBatt = document.getElementById('ring-battery');
+                const ringSolar = document.getElementById('ring-solar');
+                const cornerSolar = document.getElementById('ring-corner-solar');
+                const cornerSolarLbl = document.getElementById('ring-corner-solar-lbl');
+                const cornerBattery = document.getElementById('ring-corner-battery');
+                const cornerBatteryLbl = document.getElementById('ring-corner-battery-lbl');
+                const cornerCurrent = document.getElementById('ring-corner-current');
+                
+                if (batt > 0 || curr > 0) {
+                    // Charging -> Solar is yellow, Battery/Current is green
+                    ringBatt.style.stroke = "var(--primary)";
+                    cornerBattery.style.color = "var(--primary)";
+                    cornerBatteryLbl.style.color = "var(--primary)";
+                    cornerCurrent.style.color = "var(--primary)";
+                    
+                    ringSolar.style.stroke = "#facc15";
+                    cornerSolar.style.color = "#facc15";
+                    cornerSolarLbl.style.color = "#facc15";
+                } else if (batt < 0 || curr < 0) {
+                    // Discharging -> Solar is red, Battery/Current is red
+                    ringBatt.style.stroke = "var(--danger)";
+                    cornerBattery.style.color = "var(--danger)";
+                    cornerBatteryLbl.style.color = "var(--danger)";
+                    cornerCurrent.style.color = "var(--danger)";
+                    
+                    ringSolar.style.stroke = "var(--danger)";
+                    cornerSolar.style.color = "var(--danger)";
+                    cornerSolarLbl.style.color = "var(--danger)";
+                } else {
+                    // Idle -> grey/muted
+                    ringBatt.style.stroke = "var(--text-muted)";
+                    cornerBattery.style.color = "var(--text-muted)";
+                    cornerBatteryLbl.style.color = "var(--text-muted)";
+                    cornerCurrent.style.color = "var(--text-muted)";
+                    
+                    ringSolar.style.stroke = "var(--text-muted)";
+                    cornerSolar.style.color = "var(--text-muted)";
+                    cornerSolarLbl.style.color = "var(--text-muted)";
+                }
+                
+                const battPct = Math.min((absBatt / 5000) * 100, 100);
+                const battOffset = 213.63 - (battPct / 100) * 213.63;
+                ringBatt.style.strokeDashoffset = battOffset;
+            }
+            if (data.sa_load_power !== undefined) {
+                const load = data.sa_load_power;
+                document.getElementById('ring-corner-load').innerText = `${load} W`;
+                const loadPct = Math.min((load / 15000) * 100, 100);
+                const loadOffset = 157.08 - (loadPct / 100) * 157.08;
+                document.getElementById('ring-load').style.strokeDashoffset = loadOffset;
+            }
+            if (data.v_lowest !== undefined) {
+                document.getElementById('ring-corner-vmin').innerText = `Min: ${data.v_lowest.toFixed(3)} V`;
+            }
+            if (data.v_highest !== undefined) {
+                document.getElementById('ring-corner-vmax').innerText = `Max: ${data.v_highest.toFixed(3)} V`;
             }
 
             // Configuration

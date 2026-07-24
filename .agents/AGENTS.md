@@ -33,3 +33,27 @@ Solar-Assistant's serial port scanner (Elixir's `Circuits.UART`) only lists port
 * **Virtual Port Service**: `sudo systemctl status/restart/stop virtual-bms-port.service`
 * **Solar-Assistant Main Bridge**: `sudo systemctl restart influx-bridge.service`
 
+## Backup Checklist (Ce qu'il y a à sauvegarder)
+
+Pour conserver ou restaurer l'intégration complète de l'émulateur BMS et du tableau de bord web, voici la liste des éléments critiques à sauvegarder :
+
+### 1. Fichiers de l'application (Dossier `/home/solar-assistant/` sur le Pi)
+* **`server_smartbms.py`** : Cœur applicatif (serveur HTTP, décodeur UART, émulateur Daly BMS).
+* **`index.html`** : Code source complet de la page de tableau de bord.
+* **`setup_virtual_port.sh`** : Script d'initialisation de la liaison série virtuelle et du montage sysfs.
+* **`read_smartbms.py`** : Script utilitaire autonome de lecture directe des trames.
+
+### 2. Unités de Service systemd (Dans `/etc/systemd/system/` sur le Pi)
+* **`smartbms-web.service`** : Fichier de service pour le dashboard web.
+* **`virtual-bms-port.service`** : Fichier de service pour la création du port virtuel.
+
+### 3. Fichiers de configuration système du Raspberry Pi
+* **`/boot/firmware/config.txt`** (ou `/boot/config.txt`) :
+  * Les paramètres de désactivation du Bluetooth et d'activation de l'UART : `enable_uart=1` et `dtoverlay=disable-bt`.
+* **`/boot/firmware/cmdline.txt`** (ou `/boot/cmdline.txt`) :
+  * La ligne excluant la console série (`console=serial0,115200`) afin que `/dev/serial0` soit libre.
+
+### 4. Configuration d'authentification SSH
+* **`/home/solar-assistant/.ssh/authorized_keys`** : Contient les clés publiques SSH enregistrées pour l'accès automatique sans mot de passe depuis votre Mac.
+
+
